@@ -1,0 +1,13 @@
+#turbo
+#EVENT accept "#1# invites you to join a group."
+Sub Main
+	:TOP
+	/doevents
+	/delay 1s
+	/GOTO :TOP
+/return
+
+Sub EVENT_accept(strFull, strName)
+	/invite
+	/say Hey thanks ${strName}! I'll be your huckelberry!
+/return

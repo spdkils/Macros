@@ -1,0 +1,664 @@
+|||||||||||||| PREVENT DEADLOCKS
+#turbo
+|||| Add Loot Script
+#include Ninjadvloot.inc
+#include expinclude.inc
+
+#EVENT chatInput "[MQ2] zrad #1#"
+#EVENT chatInput "[MQ2] debug #1#"
+#EVENT chatInput "[MQ2] help"
+#EVENT chatInput "[MQ2] los"
+#EVENT chatInput "[MQ2] minlevel #1#"
+#EVENT chatInput "[MQ2] maxlevel #1#"
+#EVENT chatInput "[MQ2] pause"
+#EVENT chatInput "[MQ2] dir #1#"
+#EVENT chatInput "[MQ2] move"
+#EVENT chatInput "[MQ2] camp"
+#EVENT chatInput "[MQ2] spawn #1#"
+#EVENT chatInput "[MQ2] range #1#"
+#EVENT chatInput "You backstab #1# for #2# points of damage."
+#EVENT chatInput "You gain party experience!!"
+#EVENT chatInput "[MQ2] grey"
+#EVENT snare "#1# is engulfed by darkness."
+#EVENT snare "#1# is surrounded by darkness."
+#EVENT snare "#1# has been ensnared."
+#EVENT snare "Your spell did not take hold."
+
+
+#EVENT BotLeave "#1# has left the group."
+
+Sub Main
+	|------> Expects me to insert radius, and name of mob to keep this generic.
+	/if (${Macro.Params} < 2) {
+	/echo /mac ${Macro.Name} <radius> <name of mob>
+	/return
+	}
+	/hidecorpse looted
+
+	|-------> Variables used in my Line Of Sight function
+	/declare startEXP int outer ${Me.Exp}
+	/declare startAA int outer ${Me.AAExp}
+	/declare startLevel int outer ${Me.Level}
+	/declare startAAPoints int outer ${Me.AAPoints}
+	/declare AAGain int outer
+	/declare EXPGain int outer
+	/declare currentExp int outer
+	/declare currentAA int outer
+	/declare healerSlot int outer 0
+	/declare boolGrey bool outer
+	/declare pullHeight int outer
+	/declare pullLevel int outer
+	/declare loop int outer
+	/declare targetid int outer
+	/declare myLevel int outer
+	/declare closeGapTo int outer
+	/declare Debug int outer
+	/declare LevelBonus int outer
+	/declare minLevel int outer
+	/declare LOSPull bool outer
+	/declare pullDir string outer
+	/declare startAA int outer
+	/declare boolMove bool outer
+	/declare boolPullFromCamp bool outer
+	/declare pullFrom string outer
+	/declare strSpawn string outer
+	/declare pullRadius int outer
+	/declare intKillCount int outer
+	/declare startZone int outer ${Zone.ID}
+	/declare snared bool outer FALSE
+	/varset boolGrey TRUE
+	/varset boolPullFromCamp FALSE
+	/varset pullRadius ${Param0}
+	/varset Debug 0
+	/varset minLevel 1
+	/varset LOSPull FALSE
+	/varset pullDir R
+	/varset startAA ${Me.AAPoints}
+	/varset boolMove FALSE
+	/varset pullFrom
+	/varset strSpawn ${Param1}
+	/mapfilter spellradius ${pullRadius}
+	/mapfilter castradius 40
+
+
+
+
+	|============================================================================
+	|------------->Change this if you want to pull closer.
+	/varset closeGapTo 30
+
+	|------------> Level up Check
+	/varset myLevel ${Me.Level}
+
+	|-------> This is for the Ninja Loot, it setups the loot variables, and the loot file.
+	/call SetupAdvLootVars
+
+	|==========================================================================
+	|-------> Change this, if you want to limit what mobs you will target comapred to your height.
+	/varset pullHeight 25
+	
+	|===========================================================================
+	|------------> Change the + <NUMBER> if you want to set a pull level other than your current level.
+	/varset LevelBonus 0
+	/varcalc pullLevel ${Me.Level}+${LevelBonus}
+	
+	|----------> Just a friendly welcome message.
+	/echo ===== Welcome to the PULL script! =====
+	/echo = Won't pull mobs ${pullHeight} above or below you.
+	/echo = Won't pull mobs Level > ${pullLevel}
+	/echo = Won't pull mobs further than ${pullRadius}
+	|- /echo = Debug Level is set to ${Debug}
+	/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	/echo = Type: /end if your scared... Pulling starts in 10 seconds.
+	/say ^taunt on all
+	/say ^summon all
+	/for loop 1 to ${SpawnCount[PC radius 10]}
+		/target ${NearestSpawn[${loop},pc radius 10]}
+		/delay 1
+		/if (${Target.Class.Name.Equal[Ranger]}) /say ^bottogglearcher
+		/if (${Target.Class.Name.Equal[Magician]}) /say ^petsettype water
+		/delay 1
+	/next loop
+  /squelch /target clear
+  /for loop 1 to 10
+	/doevents chatInput
+	/delay 1s
+  /next loop
+  /call FindHealer
+
+
+:Top
+	/doevents chatInput
+	/doevents expgain
+	/if (${Zone.ID} != ${startZone}) /call EXIT
+	/varcalc pullLevel ${Me.Level}+${LevelBonus}
+
+	|--------> Loot my mess.
+	/if (${Me.FreeInventory}) {
+		/attack off
+		/if (${Debug}>0) /echo LootMobs
+		/call LootMobs
+		/look 0
+		}
+	/if (!${boolPullFromCamp} && !${Me.CombatState.Equal[Combat]}) {
+		/squelch /makecamp return
+		/delay 4s
+	}
+	
+	/if (!${Me.CombatState.Equal[Combat]}) {
+		/doevents BotLeave
+		/call Shissar
+	}
+	|---------- Did I level up?
+	/if (${myLevel} < ${Me.Level} && !${Me.CombatState.Equal[Combat]}) {
+	  /say ^botupdate
+	  /varset myLevel ${Me.Level}
+	  /echo ===== CONGRATS! =====
+	  /echo -----  CHEATER  -----
+	  /echo ---------------------
+	  /echo = Won't pull mobs Level > ${pullLevel}
+	}
+	|------- Start of pulling logic.
+	  /if (${Debug}) /echo Clearing Target
+	  /squelch /target clear
+	  /call Wait
+	|---------> Target the 1st mob I asked for, with the range I asked for, using "FINDBESTTARGET" for LOS and height
+	  /call FindBestTarget ${pullRadius} "${strSpawn}" ${LOSPull} ${pullDir}
+	  /if (!${boolGrey}) {
+		/if (${Spawn[${targetid}].ConColor.Equal[GREY]}) {
+			/varcalc minLevel ${Spawn[${targetid}].Level}+1
+			/goto :Top
+		}
+	  
+	  }
+	  /if (${Macro.Return.Equal[NO_TARGETS]}) {
+		  /delay 2s
+		  /goto :Top
+	  }
+	  /squelch /target ${Spawn[${targetid}]}
+	|--------> Won't target stuff too high level now, change the level via command.
+	  /if (${Target.ID} != NULL) /call Pull
+	  /if (${Macro.Return.Equal[ATTACK]}) /call Attack
+	/goto :Top
+/return
+| endSub
+
+
+Sub EVENT_BotLeave(fullMsg, botName)
+	/echo ${botName} left! WHY!
+	/say ^botspawn ${botName}
+	/delay 2
+	/invite ${botName}
+/return
+| endSub
+
+Sub FindHealer
+	/for loop 1 to ${Group}
+		/if (${Group.Member[${loop}].Class.Name.Equal[Cleric]}) {
+			/varset healerSlot ${loop}
+			/return
+			}
+		/if (${Group.Member[${loop}].Class.Name.Equal[Druid]} && ${healerSlot} == 0) {
+			/varset healerSlot ${loop}
+			}
+		/if (${Group.Member[${loop}].Class.Name.Equal[Shaman]} && ${healerSlot} == 0) {
+			/varset healerSlot ${loop}
+			}
+	/next loop
+	/if (${Debug}>0) /echo Healer is ${healerSlot}
+/return
+| endsub
+
+Sub EVENT_chatInput(fullMsg,varOne,varTwo)
+	|- Handle PAUSE command
+	/if (${fullMsg.Arg[2].Equal[pause]}) {
+		/echo - You have gained ${Math.Calc[${Me.AAPoints}-${startAA}]}
+		/echo - Script running for ${Int[${Math.Calc[${Macro.RunTime}/3600]}]} hours, ${Int[${Math.Calc[(${Macro.RunTime}%3600)/60]}]} mins, ${Int[${Math.Calc[(${Macro.RunTime}%60)]}]} seconds
+		/if (${Math.Calc[${Me.AAPoints}-${startAA}]}>0) {
+		/echo - That is 1AA per ${Math.Calc[(${Macro.RunTime}/60)/(${Me.AAPoints}-${startAA})]} minutes.
+		}
+		/if (${intKillCount}>0) /echo - ${Math.Calc[${intKillCount}/(${Macro.RunTime}/3600)]} kills per hour.
+		/for loop 0 to 45
+		{
+		/doevents chatInput
+		/delay 2
+		}
+	}
+	|- Handle DIR command
+	/if (${fullMsg.Arg[2].Equal[dir]}) {
+		/echo =- Changing pull direction to ${varOne}
+		/varset pullDir ${varOne}
+	}
+	|- Handle zrad command
+	/if (${fullMsg.Arg[2].Equal[zrad]}) {
+		/echo =- Changing Z distance to ${Int[${varOne}]}
+		/varset pullHeight ${Int[${varOne}]}
+		/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	}
+	|- Handle minlevel command
+	/if (${fullMsg.Arg[2].Equal[minlevel]}) {
+		/echo =- Changing minimum level to ${Int[${varOne}]}
+		/varset minLevel ${Int[${varOne}]}
+		/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	}
+	|- Handle maxlevel command
+	/if (${fullMsg.Arg[2].Equal[maxlevel]}) {
+		/varset LevelBonus ${Int[${varOne}]}
+		/varcalc pullLevel ${Me.Level}+${LevelBonus}
+		/echo =- Changing maximum level to ${pullLevel}
+		/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	}
+	|- Handle help command
+	/if (${fullMsg.Arg[2].Equal[help]}) {
+		/varset Debug 0
+		/echo == COMMANDS ==
+		/echo - los =  ${LOSPull} |Toggles Line of sight pull 1st.
+		/echo - minlevel = ${minLevel} |Change MIN level to pull
+		/echo - maxlevel = ${pullLevel} |Calculated MAX level to pull
+		/echo - zrad = ${pullHeight} |Adjust how high/low it will search.
+		/echo - debug = ${Debug} |Turn up/down debug level.
+		/echo - dir = ${pullDir} |Only pull mobs from R N E S W
+		/echo - move = ${boolMove} |Move to mobs
+		/echo - camp = ${boolPullFromCamp} |Pull centered on camp.
+		/echo - spawn = ${strSpawn} |Change what you kill
+		/echo - range = ${pullRadius} |Set pull radius
+		/echo - grey = ${boolGrey} |Target Grey?
+
+		/delay 10s ${Spawn[npc targetable zradius 25 radius 30].ID}
+
+	}
+	|- Handle LOS command
+	/if (${fullMsg.Arg[2].Equal[los]}) {
+		/if (${LOSPull}) {
+			/varset LOSPull FALSE
+			/echo =- LOS PULL CHECK OFF
+			/return
+		}
+		/varset LOSPull TRUE
+		/echo =- LOS PULL CHECK ON
+	}
+	|- Handle debug command
+	/if (${fullMsg.Arg[2].Equal[debug]}) {
+		/echo =- Changing debug level to ${Int[${varOne}]}
+		/varset Debug ${Int[${varOne}]}
+	}
+		|- Handle boolMove command
+	/if (${fullMsg.Arg[2].Equal[move]}) {
+		/if (${boolMove}) {
+			/varset boolMove FALSE
+			/echo =- I'll stay put.
+			/return
+		}
+		/varset boolMove TRUE
+		/echo =- Moving to Targets!
+	}
+	|- Handle camp setting command
+	/if (${fullMsg.Arg[2].Equal[camp]}) {
+	/if (${MakeCamp.Status.Equal[OFF]}) /return
+		/if (${boolPullFromCamp}) {
+			/varset boolPullFromCamp FALSE
+			/echo =- Pulling centered on me.
+			/varset pullFrom
+			/return
+		}
+		/varset boolPullFromCamp TRUE
+		/varset pullFrom loc ${MakeCamp.AnchorX} ${MakeCamp.AnchorY}
+
+		/echo =- Pulling from camp center.
+	}
+	|- Handle spawn setting command
+	/if (${fullMsg.Arg[2].Equal[spawn]}) {
+		/echo =- changing spawn to ${varOne}
+		/varset strSpawn ${varOne}
+		/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	}
+	|- Handle radius change setting command
+	/if (${fullMsg.Arg[2].Equal[range]}) {
+		/echo =- changing radius to ${varOne}
+		/varset pullRadius ${varOne}
+		/mapfilter spellradius ${pullRadius}
+		/echo = Your settings will pull from ${SpawnCount[npc zradius ${pullHeight} radius ${pullRadius} range 1 ${pullLevel} ${strSpawn}]} currently available mobs.
+	}
+	|- Handle gloating.
+	/if (${fullMsg.Find[backstab]}) {
+		/popup ${varOne} for ${varTwo}
+	}
+	|- Handle Mob count
+	/if (${fullMsg.Find[You gain party experience!!]}) {
+		/varcalc intKillCount ${intKillCount}+1
+		/varcalc EXPGain ${Me.Exp}-${currentExp}
+		/varcalc AAGain ${Me.AAExp}-${currentAA}
+		/varset currentAA ${Me.AAExp}
+		/varset currentExp ${Me.Exp}
+		/if (${Debug}>0) {
+			/echo XP Gain: ${EXPGain}
+			/echo AA Gain: ${AAGain}
+		}
+	}
+	|- Handle boolGrey.
+	/if (${fullMsg.Find[grey]}) {
+		/if (${boolGrey}) {
+			/varset boolGrey FALSE
+			/echo =- Not pulling greys.
+			/return
+		}
+		/varset boolGrey TRUE
+		/echo minlevel 1
+		/echo =- Pulling grey.
+	}
+/return
+| endSub
+
+Sub Cure
+
+
+/return
+| endsub
+
+
+Sub FindBadGuy
+	/for loop 1 to ${SpawnCount[npc radius 40]
+
+/return
+| endsub
+
+Sub EVENT_snare(fullMsg)
+	/varset snared TRUE
+/return
+| endsub
+
+Sub Wait
+	|-||||||||||||||||| If I'm in combat, no need to wait! Otherwise, heal up some!
+	/if (${Debug}>0) /echo Waiting
+	
+	:wait
+		/doevents chatInput
+		/if (${Debug}>4) /echo WaitLoop HP:${Me.PctHPs}% MANA:${Me.PctMana}%, Healer:${Group.Member[${healerSlot}].CurrentMana} 
+		/if (${Me.CombatState.Equal[Combat]}) /return
+		/if (((${Me.MaxMana}==0 || ${Me.PctMana} > 65) && ${Me.PctHPs}>90 && (${Group.Member[${healerSlot}].CurrentMana} > 30 || ${healerSlot} ==0)) || ${Target.ID} != NULL ) /return
+		/if (${Group.Member[${healerSlot}].CurrentMana} > 80 && ${healerSlot}) /return
+		/if (!${Me.Sitting}) /sit
+		/delay 10s ${Me.CombatState.Equal[Combat]}
+		/goto :wait
+	:end
+/return
+| endSub
+
+Sub FindBestTarget(pullDistance, strType, bool LOS, string dir)
+	/declare mobCount int local
+	/if (${LOS}) {
+		/varset mobCount ${SpawnCount[npc ${pullFrom} targetable los zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
+		/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable los zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+		/goto :SKIPLOS
+	}
+	/varset mobCount ${SpawnCount[npc ${pullFrom} targetable zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
+	/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+	:SKIPLOS
+	/if (${Debug} > 0) /echo ${mobCount} fuckers on list to be killed.
+	/if (${mobCount} == 0) /return NO_TARGETS
+	/if (${dir.Equal[R]}) /return TARGET
+	/if (!${LOS} && ${dir.NotEqual[R]}) {
+		/for loop 1 to ${mobCount}
+			/varset targetid ${NearestSpawn[${loop},npc ${pullFrom} targetable zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+			/if (${Debug}>1) /echo Target direction ${Spawn[${targetid}].HeadingTo.ShortName}
+			/if (${Spawn[${targetid}].HeadingTo.ShortName.Find[${dir}]}) /return TARGET
+		/next loop
+	}
+	/if (${LOS} && ${dir.NotEqual[R]}) {
+		/for loop 1 to ${mobCount}
+			/varset targetid ${NearestSpawn[${loop},npc ${pullFrom} targetable los zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+			/if (${Debug}>1) /echo Target direction ${Spawn[${targetid}].HeadingTo.ShortName}
+			/if (${Spawn[${targetid}].HeadingTo.ShortName.Find[${dir}]}) /return TARGET
+		/next loop
+	}
+	/varset targetid
+/return NO_TARGETS
+| endSub
+
+Sub Pull
+	/doevents chatInput
+	/attack off
+	/if (!${Target.ID}) /return PULL_FAILED
+	/if (${Debug} > 0) /echo Pulling ${Target.Name}
+	/if (${Me.Sitting}) /stand
+	/delay 2
+	/say ^summon all
+	/if (${boolMove}) {
+		/squelch /stick 70% moveback
+		/attack on
+	}
+	|------> I put this in, because if I can't get agro in 9 seconds, give up.
+	|------> The idea is to send bots/pets after him till we get an agro.
+	/for loop 0 to 9
+		/if (${Debug} > 2) /echo Trying to aggro for ${loop} seconds...
+		/doevents chatInput
+		/say ^attack all
+		/delay 1s
+		|------> If I'm out of combat, and Resting, he must have died, or something else strange like I didn't agro him.
+		/if (${Me.CombatState.Equal[Resting]}) /goto :GotAgro
+		|---------> Does he have a target? or did he die?
+		/if (${Me.TargetOfTarget.CurrentHPs} || ${Target.ID} == NULL || ${Target.ID} == NULL) /goto :GotAgro
+		/if (${SpawnCount[npc targetable zradius 10 radius 30 range 1 101]} && ${Me.CombatState.Equal[COMBAT]}) /goto :GotAgro
+	/next loop
+	/if (${Debug} > 0) /echo Failed, never could get agro too far or something else...
+	/return PULL_FAILED
+	:GotAgro
+	/if (${Debug} > 0) /echo Agro took ${loop} seconds...
+	:PullBack
+	/for loop 0 to 14
+		/doevents chatInput
+		|-- Removed the LOS check, 30 is pretty close. I should maybe think about having this range variable
+		/if (${Spawn[npc targetable zradius 10 radius 30 range 1 100].ID}) {
+			/squelch /target ${Spawn[npc targetable zradius 10 radius 30 range 1 100]}
+			/if (${Me.TargetOfTarget.CurrentHPs}) {
+				/if (${Debug}>1) /echo Changed Target
+				/say ^summon all
+				/return ATTACK
+			}
+			|-Target my previous target
+			/squelch /target ${Spawn[${targetid}]}
+		}
+		/say ^summon all
+		/delay 1s
+		|---> If he is stuck in a wall, or something else stupid, it gets stuck, so 10 seconds is enough time to wait for a gap close, fail out, target again.
+		/if (((${Spawn[${targetid}].Distance} < ${closeGapTo}) || (${Spawn[${targetid}].Distance} < ${Spawn[${targetid}].MaxRange})) && ${Target.LineOfSight} && ${Spawn[${targetid}].ID} != NULL) /return ATTACK
+		/if (${Spawn[${targetid}].ID} == NULL || ${Spawn[${targetid}].Dead}) /return PULL_FAILED
+	/next loop
+/return PULL_FAILED
+| endSub
+
+Sub Attack
+/if (${Debug}>1) /echo Attack Called
+/declare currentTarget string local
+:TOP
+/varset currentTarget ${Target.ID}
+/if (${Me.Pet.ID}) /pet attack
+/if (${Me.Class.Name.Equal[ROGUE]}) /call Rogue
+/if (${Me.Class.Name.Equal[Ranger]}) /call Ranger
+/if (${Me.Class.Name.Equal[Shadow Knight]}) /call ShadowKnight
+/if (${Me.Class.PureCaster} || ${Me.Class.Name.Equal[Shaman]}) /call Nuke
+/if (${Me.Class.Name.Equal[Monk]} || ${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Beast Lord]} || ${Me.Class.Name.Equal[Paladin]}|| ${Me.Class.Name.Equal[Berserker]}) /call Melee
+:DEFAULT
+/if (${Spawn[npc targetable zradius 10 radius 40 range 1 100].ID}) /squelch /target ${Spawn[npc targetable zradius 10 radius 40 range 1 100]}
+/delay 3
+/if (${Target.ID} && ${Target.Type.Equal[NPC]} && ${Me.TargetOfTarget.CurrentHPs}) /goto :TOP
+/return
+
+| endSub
+
+Sub Exit
+	/echo - You have gained ${Math.Calc[${Me.AAPoints}-${startAA}]}
+	/echo - Script running for ${Macro.RunTime}
+	/if (${Math.Calc[${Me.AAPoints}-${startAA}]}>0) {
+		/echo - That is 1AA per ${Math.Calc[(${Macro.RunTime}/60)/(${Me.AAPoints}-${startAA})]} minutes.
+	}
+	/if (${intKillCount}>0) /echo - ${Math.Calc[${intKillCount}/(${Macro.RunTime}/3600)]} kills per hour.
+	/echo You died, or zoned. Wahh waa wahhh
+	/afk
+	/endmacro
+/return
+| endsub
+
+Sub Ranger
+	/if (${Debug}>1) /echo Ranger
+	/declare myTarget int local ${Target.ID}
+	/varset snared FALSE
+	/face fast
+	/squelch /stick 70% moveback
+:RANGERTOP
+	/doevents chatInput
+	/doevents snare
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/say ^attack all
+	/attack on
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Ensnare]} && !${snared}) {
+		/cast "Ensnare"
+		/delay 3s (!${Me.Casting.ID}
+		/doevents snare
+	}
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Snare]} && !${snared}) {
+		/cast "Snare"
+		/delay 3s !${Me.Casting.ID}
+		/doevents snare
+
+	}
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Kick]} && ${Me.Ability[1].Equal[Kick]}) /doability "Kick"
+	/delay 1s
+	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :RANGERTOP
+/return
+| endsub
+
+Sub ShadowKnight
+	/if (${Debug}>1) /echo ShadowKnight
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/declare myTarget int local ${Target.ID}
+	/varset snared FALSE
+	/face fast
+	/squelch /stick 70% moveback
+:SKTOP
+	/doevents chatInput
+	/doevents snare
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/attack on
+	/say ^attack all
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Dooming Darkness]} && !${snared}) {
+		/cast "Dooming Darkness"
+		/delay 3s !${Me.Casting.ID}
+	}
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Engulfing Darkness]} && !${snared}) {
+		/cast "Engulfing Darkness"
+		/delay 3s !${Me.Casting.ID}
+	}
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Clinging Darkness]} && !${snared}) {
+		/cast "Clinging Darkness"
+		/delay 3s !${Me.Casting.ID}
+	}
+
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) /doability "Bash"
+	/delay 1s
+	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :SKTOP
+/return
+| endsub
+
+Sub Nuke
+	/if (${Debug}>2) /echo Nuke Looping
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/declare nukeTarget int local ${Target.ID}
+	/declare badGuyCount int local
+:NUKETOP
+	/varset badGuyCount 0
+	/say ^attack all
+	/attack on
+	/doevents chatInput
+	/if ((${Spawn[${Target.ID}].Distance} < ${Spawn[${Target.ID}].MaxRange}) && !${Me.Casting.ID}) {
+		/face fast
+		/keypress back hold
+		/delay 10 (${Spawn[${Target.ID}].Distance}>${Spawn[${Target.ID}].MaxRange})
+		/keypress back
+	}
+	/if (${Target.Distance}<34) /face
+	|------> Do I have a PBAE? If so, get usable distance, and get how many mobs I can fuck up!
+	/if (${Me.Gem[4].TargetType.Equal[PB AE]}) /varset badGuyCount ${SpawnCount[npc radius ${Me.Gem[4].AERange} zradius 10 range 1 100]}
+	|------> Do I have a AE I can throw into their shit? If so, calculate how many of them I can fuck up!
+	/if (${Me.Gem[4].TargetType.Equal[Targeted AE]}) /varset badGuyCount ${SpawnCount[npc loc ${Target.X} ${Target.Y} radius ${Me.Gem[4].AERange} zradius 10 range 1 100]}
+	|-------------> IF GEM 4 is ready, and I've got more than 3 targets Calculated LETS DO THIS!
+	/if (${Me.SpellReady[4]} && ${badGuyCount} > 2 && ${Target.ID} != NULL) {
+		/if (${Debug}>1) /echo Trying to AE ${badGuyCount} targets.
+		/cast 4
+		/goto :jump1
+		}
+	|-------------> If one target, just nuke that son of a bitch.
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[1]} && ${Me.PctMana} > 5) {
+		/if (${Debug}>1) /echo Trying to cast on my target...
+		/cast 1
+	}
+	:jump1
+	/delay 1s
+	/if (${Target.ID} == ${nukeTarget} && ${Target.ID} != NULL) /goto :NUKETOP
+/return
+| endsub
+
+Sub Shissar
+/declare ShissLoop int local
+	/if (${FindItem[Staff of the Serpent].ID}) {
+		/if (!${Me.Buff[Speed of the Shissar].Name.Equal[Speed of the Shissar]}) {
+			/for ShissLoop 0 to ${Group}
+				|/echo ${Group.Member[${ShissLoop}].Name}
+				/target ${Group.Member[${ShissLoop}].Name}
+				/delay 1s
+				/itemnotify mainhand rightmouseup
+				/delay 1s
+				/delay 30s !${Me.Casting.ID}
+			/next ShissLoop
+		}
+	}
+	
+/if (${Me.SpellReady[Boon of the Clear Mind]} && !${Me.Buff[Boon of the Clear Mind].Name.Equal[Boon of the clear mind]}) /cast "Boon of the clear mind"
+/delay 3s
+/return
+| endsub
+
+Sub Melee
+	/if (${Debug}>1) /echo Melee Loop
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/declare myTarget int local ${Target.ID}
+	/face fast
+	/squelch /stick 70% moveback
+:MELEETOP
+	/doevents chatInput
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/attack on
+	/say ^attack all
+	/if (${Target.Distance}<15 && ${Me.AbilityReady[Flying Kick]}) /doability "Flying Kick"
+	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Slam]} && ${Me.Ability[1].Equal[Slam]}) /doability 1
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && ${Me.Ability[1].Equal[Bash]}) /doability "Bash"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Kick]} && ${Me.Ability[1].Equal[Kick]}) /doability "Kick"
+	/delay 1s
+	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :MELEETOP
+/return
+| endsub
+
+Sub Rogue
+	/if (${Debug}>1) /echo Rogue Loop
+	/declare myTarget int local
+	/varset myTarget ${Target.ID}
+	/squelch /stick snaproll loose
+	/look 0
+:RogueTop
+	/doevents chatInput
+	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
+	/if (${Me.TargetOfTarget.Name.NotEqual[${Me.Name}]}) /squelch /stick snaproll loose
+	/attack on
+	/say ^attack all
+	/if (${Target.Distance}<15 && ${Me.AbilityReady[Backstab]} && ${Stick.Behind}) /doability "Backstab"
+	/if (${Target.Distance}<15 && ${Me.AbilityReady[Hide]}) {
+		/attack off
+		/doability "Hide"
+		/doability "Sneak"
+		/attack on
+		}
+	/delay 1s
+	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :RogueTop
+/return
+| endsub

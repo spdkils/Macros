@@ -1,0 +1,63 @@
+sub main
+/declare healspell 	string 	outer "Minor Healing"
+/declare healgem 	int 	outer 1
+/declare healpercent 	int 	outer 80
+
+
+|-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|
+|       varholders do not touch       |
+|-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|
+/declare groupcount 	int 	outer
+/declare targetpercent 	int 	outer
+/declare targetid 	int 	outer
+|-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|
+
+:mainloop
+/if (!${Me.Gem[${healspell}]}) {
+	/echo You do not have ${healspell} memmed. Attempting to memorize.
+	/mem ${healspell} gem${healgem}
+	/delay 5s
+	/if (!${Me.Gem[${healspell}]}) {
+		/echo Memorize FAILED! Please manually memorize ${healspell} and restart macro.
+		/end
+	}
+}
+/delay 1
+/if (${Me.Speed} || ${Me.Stunned} || ${Me.Casting.ID} || ${Me.Ducking} || ${Me.Invis}) /goto :mainloop
+/varset targetpercent 100
+/varset targetid 0
+
+/for groupcount 0 to ${Group.Members}
+	/if (${Group.Member[${groupcount}].PctHPs} && ${Group.Member[${groupcount}].PctHPs}<${targetpercent}) {
+		/varset targetpercent 	${Group.Member[${groupcount}].PctHPs}
+		/varset targetid	${Group.Member[${groupcount}].ID}
+	}
+/next groupcount
+
+/if (${targetpercent}<${healpercent}) {
+	/tar ID ${targetid}
+	:waitfortarget
+	/delay 1
+	/if (${Target.ID}==${targetid}) /goto :castheal
+	/goto :waitfortarget
+	:castheal
+	/cast ${healspell}
+	/echo Casting ${healspell} on ${Spawn[${targetid}]}
+	/delay 5
+}
+
+/if (${Me.PctMana}<10 || !${Me.TargetOfTarget.Name.Equal[${Me.Name}]}) /call Wait
+
+/goto :mainloop
+/end
+
+Sub Wait
+  :wait
+	/echo Waiting
+	/if (${Me.CombatState.Equal[Combat]} || ${Me.PctMana} > 90) /goto :end
+	/if (!${Me.Sitting}) /sit
+	/delay 5s
+	/if(${Me.CombatState.Equal[Combat]} && $(Me.PctMana} < 65 ) /goto :end
+	/if (${Me.PctMana} < 65) /goto :wait
+  :end
+/return

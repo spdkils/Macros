@@ -1,0 +1,43 @@
+#turbo
+
+Sub Main
+	|-	1 War	1 Hum	0 Male
+	|-	2 Cler	2 Bar	1 Female
+	|-	3 Pal	3 Eur	
+	|-	4 Rng	4 Elf	
+	|-	5 Shd	5 HIE	
+	|-	6 Dru	6 DRK	
+	|-	7 Mnk	7 HEL	
+	|-	8 Brd	8 DWF	
+	|-	9 Rog	9 TRL	
+	|-	10 Shm	10 OGR	
+	|-	11 Nec	11 HLF	
+	|-	12 Wiz	12 GNM	
+	|-	13 Mag	128 IKS	
+	|-	14 Enh	130 VAH	
+	|-	15 Bst	330 FRG	
+	|-	16 Bes	522 DRK	
+
+/say ^botcreate TTank 1 1 0
+/say ^botcreate CCleric 2 1 0
+/say ^botcreate MMage 13 1 0
+/say ^botcreate McMage 13 1 0
+/say ^botcreate EEnch 14 1 0
+
+/if (${Me.Name.Equal[Rizel]}) /call Rizell
+
+/return
+| endsub
+
+Sub Rizell
+	/say ^botspawn TTank
+	/say ^botspawn CCleric
+	/say ^botspawn MMage
+	/say ^botspawn McMage
+	/say ^botspawn EEnch
+	/invite TTank
+	/invite CCleric
+	/invite MMage
+	/invite McMage
+	/invite EEnch
+/return

@@ -1,0 +1,22 @@
+#Turbo
+#EVENT botSpawn "#1# is a level #2# #*# Female #3#"
+#EVENT botSpawn "#1# is a level #2# #*# Male #3#"
+
+Sub Main
+	/declare spawnCount int outer
+	/varset spawnCount 0
+	/say ^botlist
+	/delay 5
+	/doevents
+/return
+| endsub
+
+Sub EVENT_botSpawn(strFull, strName, strJunk, strClass)
+	/if (${spawnCount} < 5) {
+		/say ^botspawn ${strName}
+		/delay 2
+		/invite ${strName}
+		/varcalc spawnCount ${spawnCount}+1
+	}
+/return
+| endsub

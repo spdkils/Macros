@@ -1,0 +1,33 @@
+#Turbo
+
+#EVENT expgain "You gain party experience!!"
+
+Sub Main
+/declare intKillCount int outer 0
+/declare currentExp int outer 0
+/declare intLevel int outer ${Me.Level}
+/declare intLevelGain int outer 0
+/declare startExp int outer 0
+/varcalc startExp 330*${Me.Level}+${Me.Exp}
+/declare floatPerKill float outer 0
+/declare floatGained float outer 0
+:TOP
+/doevents
+/delay 5
+/goto :TOP
+
+/return
+| endsub
+
+Sub EVENT_expgain
+	/varcalc intLevelGain ${Me.Level}-${intLevel}
+	/varcalc intKillCount ${intKillCount}+1
+	/varcalc currentExp ${Math.Calc[330*${Me.Level}+${Me.Exp}]}
+	/varcalc floatGained ${Math.Calc[((${currentExp}-${startExp})/330)*100]}
+	/echo ------------------------------------------------------
+	/if (${intKillCount}>0) /echo - ${intKillCount} kills in ${Int[${Math.Calc[${Macro.RunTime}/3600]}]} hours, ${Int[${Math.Calc[(${Macro.RunTime}%3600)/60]}]} mins, ${Int[${Math.Calc[(${Macro.RunTime}%60)]}]} seconds
+	/if (${intKillCount}>0) /echo - ${Math.Calc[${intKillCount}/(${Macro.RunTime}/3600)]} kills per hour.
+	/if (${intKillCount}>0) /echo - You have gained ${floatGained}% Avg ${Math.Calc[${floatGained}/${intKillCount}]} per kill.
+	/if (${intKillCount}>0) /echo - ${Math.Calc[(((${currentExp}-${startExp})/330)/(${Macro.RunTime}/3600))*100]}% per hour.
+	/if (${intLevelGain}>0) /echo - You have gained ${intLevelGain} level(s)
+/return

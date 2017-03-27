@@ -1,0 +1,10 @@
+#turbo
+sub main
+	:TOP
+    /if (${Cursor.ID}) /autoinventory
+    /delay 5s ${Window[TradeskillWnd].Child[COMBW_CombineButton].Enabled}
+    /nomodkey /notify TradeskillWnd CombineButton leftmouseup
+    /delay 4s ${Cursor.ID}
+    /if (${Cursor.ID}) /autoinventory
+	/goto :TOP
+/return

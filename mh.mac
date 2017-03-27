@@ -1,0 +1,15 @@
+#Turbo
+Sub Main
+:TOP
+/if (${Me.Sitting}) /sit
+/if (${Me.PctMana}<10) /goto :MED
+/if (${Me.SpellReady[Minor Healing]}) /cast "Minor Healing"
+/delay 1
+/GOTO :TOP
+:MED
+/if (!${Me.Sitting}) /sit
+/if (${Me.PctMana}>90) /goto :TOP
+/delay 1
+/GOTO :MED
+/return
+| endsub

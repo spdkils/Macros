@@ -1,0 +1,75 @@
+|||||||||||||| PREVENT DEADLOCKS
+#turbo
+|||| Add Loot Script
+#include Ninjadvloot.inc
+
+|- USE THIS SECTION FOR EVENT PROCESSING
+
+Sub Main
+
+	|- USE THIS SECTION FOR VARIABLE DECLARATIONS
+
+
+
+	|- END VARIABLE DECLARATIONS
+
+	|- Setting up looter
+	/call SetupAdvLootVars
+
+
+
+/return
+| endSub
+
+Sub FindTarget
+
+/return
+| endsub
+
+
+
+Sub Agro
+
+/return
+| endSub
+
+
+Sub Pull
+
+
+/return
+| endSub
+
+Sub Wizard
+
+/return
+| endSub
+
+Sub DDSpell
+
+/return
+| endSub
+
+
+Sub AESpell
+
+/return
+| endSub
+
+
+Sub Warrior
+
+/return
+| endSub
+
+Sub Mage
+
+
+/return
+| endSub
+
+Sub Monk
+
+/return
+| endSub
+

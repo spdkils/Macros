@@ -1,0 +1,9 @@
+#turbo
+Sub Main
+/declare loop int outer 0
+/for loop 1 to 21
+	/say ^invremove ${loop}
+	/delay 5
+/next loop
+/return
+| endsub

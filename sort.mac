@@ -1,0 +1,105 @@
+#turbo
+
+Sub Main
+/declare loop int outer
+/declare innerloop int outer
+/declare intSlots int outer
+/declare intBags int outer
+/declare bagArray[8] string outer
+/declare intCount int outer
+/declare intBubble int outer
+/declare boolSwap bool outer
+/declare intBubbleList[152] int outer
+/declare intLastValue int outer
+/declare intMaxValue int outer
+/declare intLastInvSlot int outer
+/varset intCount 0
+/varset intSlots 0
+/varset intBags 0
+/varset intMaxValue 0
+|- Loop Bag Slots to get container slots
+/keypress b
+/for loop 1 to 8
+	/if (${InvSlot[Pack${loop}].Item.Container}) /varcalc intBags ${intBags}+1
+	/varset bagArray[${loop}] ${InvSlot[Pack${loop}].Item.Container}
+	/varcalc intSlots ${intSlots}+${InvSlot[Pack${loop}].Item.Container}
+	/if (${InvSlot[Pack${loop}].Item.Container}) {
+		/for innerloop 1 to ${InvSlot[Pack${loop}].Item.Container}
+			/if (${InvSlot[Pack${loop}].Item.Item[${innerloop}].InvSlot}) {
+				/if (${InvSlot[Pack${loop}].Item.Item[${innerloop}].Weight} > ${intMaxValue}) {
+					/varset intMaxValue ${InvSlot[Pack${loop}].Item.Item[${innerloop}].Weight}
+				}
+				/varcalc intCount ${intCount}+1
+				|/echo ${InvSlot[Pack${loop}].Item.Item[${innerloop}].InvSlot}
+				/shift /itemnotify in Pack${loop} ${innerloop} leftmouseup
+				/delay 1
+				/autoinv
+				}
+		/next innerloop
+		}
+/next loop
+/return
+
+:REPEAT
+/varset boolSwap FALSE
+/varset intLastValue ${intMaxValue}
+/for loop 1 to 8
+	/if (${InvSlot[Pack${loop}].Item.Container}) {
+		/for innerloop 1 to ${InvSlot[Pack${loop}].Item.Container}
+			/if (${InvSlot[Pack${loop}].Item.Item[${innerloop}].InvSlot}) {
+				/if (${InvSlot[Pack${loop}].Item.Item[${innerloop}].Weight} > ${intLastValue}) {
+					/call Swap ${InvSlot[Pack${loop}].Item.Item[${innerloop}].InvSlot}, ${intLastInvSlot}
+					/varset boolSwap TRUE
+				}
+				/varset intLastValue ${InvSlot[Pack${loop}].Item.Item[${innerloop}].Weight}
+				/varset intLastInvSlot ${InvSlot[Pack${loop}].Item.Item[${innerloop}].InvSlot}
+				}
+		/next innerloop
+		}
+/next loop
+/if (!${boolSwap}) /return
+/GOTO :REPEAT
+
+/echo You have ${intBags} bags.
+/echo You have ${intSlots} inventory slots.
+/echo You have ${intCount} items in your backs.
+/echo Array.Size ${intBubbleList.Size}
+/echo Array.Dimensions ${intBubbleList.Dimensions}
+/echo Calling bubble.
+| ${InvSlot[Pack1].Item.Item[1].InvSlot}
+/return
+| endsub
+
+Sub Bubble
+	/declare short int local
+	:REPEAT
+	/varset boolSwap FALSE
+	/for loop 2 to ${intCount}
+		/varcalc short ${Int[${loop}-1]}
+		/if (${InvSlot[${intBubbleList[${short}]}].Item.ID} > ${InvSlot[${intBubbleList[${Int[${Math.Calc[${loop}]}]}]}].Item.ID}) {
+			|/call Swap(${intBubbleList[${Int[${Math.Calc[${loop}-1]}]}]},${intBubbleList[${Int[${Math.Calc[${loop}]}]}]})
+			/varset boolSwap FALSE
+		}	
+	/next loop
+	/if (!${boolSwap}) /return
+	/GOTO :REPEAT
+/return
+| endsub
+
+Sub Swap(int intSlotOne, int intSlotTwo)
+	/echo Calling Swap ${intSlotOne} ${intSlotTwo}
+	/if (!${intSlotTwo}) /return
+	/shift /itemnotify ${intSlotOne} leftmouseup
+	/delay 1
+	/shift /itemnotify ${intSlotTwo} leftmouseup
+	/delay 1
+	/shift /itemnotify ${intSlotOne} leftmouseup
+	/delay 1
+/return
+| endsub
+
+Sub TableSwap(int intSlotOne, int intSlotTwo)
+
+
+/return
+| endsub

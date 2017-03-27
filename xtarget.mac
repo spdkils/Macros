@@ -1,0 +1,23 @@
+#turbo
+Sub Main
+	/declare loop int outer
+	/declare innerLoop int outer
+	/declare targetID int outer
+	/declare lastTarget int outer
+	/declare boolAdd bool outer
+	/varset lastTarget ${Target.ID}
+	/for loop 1 to ${SpawnCount[npc zradius 25 radius 40]}
+		/varset boolAdd TRUE
+		/varset targetID ${NearestSpawn[${loop},npc zradius 25 radius 40].ID}
+			/for innerLoop 0 to ${Me.XTarget}
+				/echo ${targetID} ${Me.XTarget[${innerLoop}].ID}
+				/if (${targetID} == ${Me.XTarget[${innerLoop}].ID}) /varset boolAdd FALSE
+			/next innerLoop
+		/if (${boolAdd}) {
+			/target ${Spawn[${targetID}]}
+			/xtarget add
+		}
+	/next loop
+	/if (${lastTarget}) /target ${Spawn[${lastTarget}]}
+/return
+| endsub

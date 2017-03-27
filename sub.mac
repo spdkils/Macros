@@ -1,0 +1,13 @@
+#turbo
+
+Sub Main
+	:TOP
+	/doevents
+	/delay 5s
+	/echo Sup?
+	/delay 1
+	/goto :TOP
+/return
+| endsub
+
+

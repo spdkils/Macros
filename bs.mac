@@ -1,0 +1,16 @@
+#EVENT Backstab "You backstab #1# for #2# points of damage."
+sub Main
+/ECHO Loading BACKSTAB Watcher
+:TOP
+	/doevents
+	/delay 3s
+/GOTO :TOP
+
+/return
+| endsub
+
+Sub EVENT_Backstab(fullMsg, guyName, intDamage)
+	/echo Backstab for ${intDamage}
+	/popup Backstab for ${intDamage}
+/return
+| endSub

@@ -1,0 +1,13 @@
+|- Follow
+
+Sub Main
+	/declare loop int outer
+	/for loop 1 to ${SpawnCount[pc radius 10 nopet]}
+			/target ${NearestSpawn[${loop},pc radius 10 nopet]}
+			/delay 2
+			|/echo ${Math.Calc[(${loop}*75)+50]}
+			/say ^botfollowdistance set ${Math.Calc[(${loop}*75)+50]}
+	/next loop
+
+/return
+| endsub

@@ -1,0 +1,12 @@
+Sub Main
+/declare loop int outer
+/say ^summon all
+/for loop 1 to ${SpawnCount[PC radius 15]}
+	/target ${NearestSpawn[${loop},pc radius 15]}
+	/delay 1
+	/if (${Target.Class.Name.Equal[Ranger]}) /say ^bottogglearcher
+	/if (${Target.Class.Name.Equal[Magician]}) /say ^petsettype earth
+	/delay 1
+/next loop
+/return
+| endSub

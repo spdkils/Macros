@@ -1,0 +1,8 @@
+#Turbo
+
+Sub Main
+	/echo Test of delay
+	/delay 10s (${Me.PctHPs}<90 || (${Me.PctMana}>70 && ${Me.Name.Equal[Psychoactive]}))
+	/echo Am I healthy?
+	/echo Stacking Delays
+/return

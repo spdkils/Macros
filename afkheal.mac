@@ -1,0 +1,51 @@
+#turbo
+
+Sub Main
+/declare loop int outer
+/declare lowest int outer 100
+/declare member int outer 0
+/declare healAmount int outer 0
+/declare currentZone int outer ${Zone.ID}
+/declare PCs int outer 0
+
+/if (${Param0.Equal[TRUE]}) {
+	/varset PCs ${SpawnCount[pc radius 100]}
+	/echo ${PCs}
+	/varset lowest 100
+	/for loop 1 to ${PCs}
+		/if (${NearestSpawn[${loop},pc radius 100].PctHPs} < ${lowest}) {
+			/varset lowest ${NearestSpawn[${loop},pc radius 100].PctHPs}
+			/varset member ${NearestSpawn[${loop},pc radius 100].ID}
+			}
+	/NEXT loop
+	/echo ${member}
+	/target ${Spawn[${member}].Name}
+	/return
+}
+	/if (${Group} > 0) {
+		/varset lowest 100
+		/varset member 0
+		/for loop 0 to ${Group}
+			/if (${Group.Member[${loop}].PctHPs} < ${lowest}) {
+				/varset lowest ${Group.Member[${loop}].PctHPs}
+				/varset member ${loop}
+			}
+		/NEXT loop
+		/if (${member}) /target ${Group.Member[${member}].Name}
+
+	}
+/return
+| endsub
+
+Sub CanCast(string Spelll)
+	/if ($)
+	
+
+/return
+| endsub
+
+Sub Exit
+	/echo You died, or zoned. Wahh waa wahhh
+	/endmacro
+/return
+| endsub
