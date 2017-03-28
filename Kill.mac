@@ -16,9 +16,11 @@
 #EVENT chatInput "[MQ2] camp"
 #EVENT chatInput "[MQ2] spawn #1#"
 #EVENT chatInput "[MQ2] range #1#"
+#EVENT chatInput "[MQ2] grey"
 #EVENT chatInput "You backstab #1# for #2# points of damage."
 #EVENT chatInput "You gain party experience!!"
-#EVENT chatInput "[MQ2] grey"
+#EVENT chatInput "You have gained an ability point!  You now have #1# ability points."
+#EVENT chatInput "You have gained a group leadership point!"
 #EVENT snare "#1# is engulfed by darkness."
 #EVENT snare "#1# is surrounded by darkness."
 #EVENT snare "#1# has been ensnared."
@@ -40,7 +42,8 @@ Sub Main
 	/declare startAA int outer ${Me.AAExp}
 	/declare startLevel int outer ${Me.Level}
 	/declare startAAPoints int outer ${Me.AAPoints}
-	/declare AAGain int outer
+	/declare AAGain int outer 0
+	/declare GLGain int outer 0
 	/declare EXPGain int outer
 	/declare currentExp int outer
 	/declare currentAA int outer
@@ -212,17 +215,16 @@ Sub FindHealer
 Sub EVENT_chatInput(fullMsg,varOne,varTwo)
 	|- Handle PAUSE command
 	/if (${fullMsg.Arg[2].Equal[pause]}) {
-		/echo - You have gained ${Math.Calc[${Me.AAPoints}-${startAA}]}
+		/echo - You have gained ${AAGain}
 		/echo - Script running for ${Int[${Math.Calc[${Macro.RunTime}/3600]}]} hours, ${Int[${Math.Calc[(${Macro.RunTime}%3600)/60]}]} mins, ${Int[${Math.Calc[(${Macro.RunTime}%60)]}]} seconds
-		/if (${Math.Calc[${Me.AAPoints}-${startAA}]}>0) {
-		/echo - That is 1AA per ${Math.Calc[(${Macro.RunTime}/60)/(${Me.AAPoints}-${startAA})]} minutes.
+		/if (${AAGain}>0) {
+			/echo - That is 1AA per ${Math.Calc[(${Macro.RunTime}/60)/(${AAGain})]} minutes.
 		}
 		/if (${intKillCount}>0) /echo - ${Math.Calc[${intKillCount}/(${Macro.RunTime}/3600)]} kills per hour.
 		/for loop 0 to 45
-		{
-		/doevents chatInput
-		/delay 2
-		}
+			/doevents chatInput
+			/delay 2
+		/next loop
 	}
 	|- Handle DIR command
 	/if (${fullMsg.Arg[2].Equal[dir]}) {
@@ -324,15 +326,24 @@ Sub EVENT_chatInput(fullMsg,varOne,varTwo)
 		/popup ${varOne} for ${varTwo}
 	}
 	|- Handle Mob count
+	|	#EVENT chatInput "You gain party experience!!"
+	|	#EVENT chatInput "You have gained an ability point!  You now have #1# ability points."
+	|	#EVENT chatInput "You have gained a group leadership point!"
+	|
+	|
+	/if (${fullMsg.Find[You have gained an ability point!]}) {
+		/varcalc AAGain ${AAGain}+1
+	}
+	/if (${fullMsg.Find[You have gained a group leadership point!]}) {
+		/varcalc GLGain ${GLGain}+1
+	}
 	/if (${fullMsg.Find[You gain party experience!!]}) {
 		/varcalc intKillCount ${intKillCount}+1
 		/varcalc EXPGain ${Me.Exp}-${currentExp}
-		/varcalc AAGain ${Me.AAExp}-${currentAA}
 		/varset currentAA ${Me.AAExp}
 		/varset currentExp ${Me.Exp}
 		/if (${Debug}>0) {
 			/echo XP Gain: ${EXPGain}
-			/echo AA Gain: ${AAGain}
 		}
 	}
 	|- Handle boolGrey.
