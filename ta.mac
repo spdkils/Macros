@@ -5,7 +5,7 @@ Sub Main
 	/target ${NearestSpawn[${loop},pc radius 15]}
 	/delay 1
 	/if (${Target.Class.Name.Equal[Ranger]}) /say ^bottogglearcher
-	/if (${Target.Class.Name.Equal[Magician]}) /say ^petsettype earth
+	/if (${Target.Class.Name.Equal[Magician]}) /say ^petsettype water
 	/delay 1
 /next loop
 /return
