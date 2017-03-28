@@ -264,7 +264,7 @@ Sub EVENT_chatInput(fullMsg,varOne,varTwo)
 		/echo - range = ${pullRadius} |Set pull radius
 		/echo - grey = ${boolGrey} |Target Grey?
 
-		/delay 10s ${Spawn[npc targetable zradius 25 radius 30].ID}
+		/delay 10s (${Spawn[npc targetable zradius 25 radius 30].ID}!=NULL)
 
 	}
 	|- Handle LOS command
