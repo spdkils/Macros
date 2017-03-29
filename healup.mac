@@ -7,7 +7,7 @@ Sub Main
 	/if (${Group.Member[${loop}].PctHPs} < 90 && ${Me.SpellReady[Minor Healing]}) {
 		/target ${Group.Member[${loop}].Name}
 		/cast "Minor Healing"
-		/delay 4s ${Me.SpellReady[Minor Healing]}
+		/delay 4s ${Me.Casting.ID}
 		/goto :TOP
 	}
 /next loop
