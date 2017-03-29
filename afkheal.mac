@@ -3,10 +3,11 @@
 Sub Main
 /declare loop int outer
 /declare lowest int outer 100
-/declare member int outer 0
+/declare member int outer -1
 /declare healAmount int outer 0
 /declare currentZone int outer ${Zone.ID}
 /declare PCs int outer 0
+
 
 /if (${Param0.Equal[TRUE]}) {
 	/varset PCs ${SpawnCount[pc radius 100]}
@@ -31,7 +32,7 @@ Sub Main
 				/varset member ${loop}
 			}
 		/NEXT loop
-		/if (${member}) /target ${Group.Member[${member}].Name}
+		/if (${member}>-1) /target ${Group.Member[${member}].Name}
 
 	}
 /return

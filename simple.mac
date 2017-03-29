@@ -18,14 +18,14 @@ Sub Main
 :TOP
 	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]} && ${Me.TargetOfTarget.ID} != ${Me.ID}) /doability "Taunt"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) /doability "Bash"
-	/if (${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]) /cast "Desist"
-	/if (${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]) /cast "Cease"
-	/if (${Spawn[pc Gang].PctHPs}<30 ${Me.SpellReady[Light Healing]}) {
+	/if (${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Desist"
+	/if (${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Cease"
+	/if (${Spawn[pc Gang].PctHPs}<30 && ${Me.SpellReady[Light Healing]}) {
 		/stick off
 		/target ${Spawn[pc Gang].Name}
 		/delay 2
 		/cast "Light Healing"
-		/delay 4s ${Me.Casting}
+		/delay 4s ${Me.Casting.ID}
 		/target ${Spawn[${myTarget}]}
 		/stick id ${myTarget}
 	}
