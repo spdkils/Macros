@@ -34,7 +34,7 @@ Sub EVENT_expgain(fullMsg)
 		/varcalc AAPointGain ${AAPointGain}+1
 	}
 	/if (${AAPointGain}>1) {
-		/varcalc AAExpGain ${Math.Calc[(330-${AAExpStart})+(${AAPointGain}*300)]}
+		/varcalc AAExpGain ${Math.Calc[(330-${AAExpStart})+((${AAPointGain}-1)*330)]}
 	}
 	/if (${AAPointGain}==1) {
 		/varcalc AAExpGain ${Math.Calc[(330-${AAExpStart})+${Me.AAExp}]}
