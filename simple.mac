@@ -1,0 +1,20 @@
+#Turbo
+
+Sub Main
+/echo Lame Assist
+/assist Gang
+/delay 3
+/declare myTarget int local ${Target.ID}
+/if (!${Target.ID}) /return
+/face fast
+/stick id ${Target.ID} 10
+/attack on
+:TOP
+	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]} && ${Me.TargetOfTarget.ID} != ${Me.ID}) /doability "Taunt"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) /doability "Bash"
+	/delay 2
+	/if (${myTarget} == ${Target.ID}) /GOTO :TOP
+	/attack off
+	/stick id ${Spawn[pc Gang].ID}
+/return
+| endsub

@@ -1,0 +1,16 @@
+#turbo
+
+Sub Main
+/declare loop int local 0
+/for loop 0 to ${Group}
+	:TOP
+	/if (${Group.Member[${loop}].PctHPs} < 90 && ${Me.SpellReady[Minor Healing]}) {
+		/target ${Group.Member[${loop}].Name}
+		/cast "Minor Healing"
+		/delay 4s ${Me.SpellReady[Minor Healing]}
+		/goto :TOP
+	}
+/next loop
+
+/return
+| endsub
