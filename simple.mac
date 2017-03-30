@@ -1,25 +1,42 @@
 #Turbo
 
+#EVENT mobCast "#1# begins to cast a spell."
+
+
 Sub Main
 /echo Lame Assist
-/keypress {esc}
 /assist Gang
 /delay 3
 /declare myTarget int local ${Target.ID}
 /if (!${Target.ID}) /return
 /face fast
-/stick id ${Target.ID} 10
+/if (${Spawn[${Target.ID}].LineOfSight}) /stick id ${Target.ID} 10
 /if (${Target.Type.Equal[PC]}) {
 	/attack off
 	/return
  }
 /bc Attacking ${Target.Name}
+/declare caster bool local ${Target.Class.PureCaster}
+/if (!${caster}) /varset caster ${Target.Class.PetClass}
 /attack on
 :TOP
+	/doevents
 	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
-	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) /doability "Bash"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
 	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Desist"
 	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Cease"
+	/if (${Me.Casting.ID}) /bc I will not be ignored!
+	/delay 4s !${Me.Casting.ID}
+	/if (${Me.PctHPs} < 31) {
+		/bc BAD NEWS!
+		/vgroup 007
+		/target myself
+		/delay 2
+		/alt act 6001
+		/delay 2
+		/target ${Spawn[${myTarget}]}
+	}
+	
 	/if (${Spawn[pc Gang].PctHPs}<30 && ${Me.SpellReady[Light Healing]}) {
 		/stick off
 		/target ${Spawn[pc Gang].Name}
@@ -33,5 +50,26 @@ Sub Main
 	/if (${myTarget} == ${Target.ID}) /GOTO :TOP
 	/attack off
 	/stick id ${Spawn[pc Gang].ID}
+/return
+| endsub
+
+Sub EVENT_mobCast(strFullmsg,strWho)
+	/if (${Target.CleanName.Equal[${strWho}]} && ${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) {
+		/doability "Bash"
+		/bc Shield to the FACE
+		/return
+	}
+	/if (${Target.CleanName.Equal[${strWho}]} && ${Me.SpellReady[Cease]} && !${Me.AbilityReady[Bash]}) {
+		/cast "Cease"
+		/bc No CAST!
+		/delay 4s !${Me.Casting.ID}
+		/return
+	}
+	/if (${Target.CleanName.Equal[${strWho}]} && ${Me.SpellReady[Desist]} && !${Me.AbilityReady[Bash]}) {
+		/cast "Desist"
+		/bc No CAST!
+		/delay 4s !${Me.Casting.ID}
+		/return
+	}
 /return
 | endsub

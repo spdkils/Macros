@@ -32,7 +32,7 @@ Sub Main
 				/varset member ${loop}
 			}
 		/NEXT loop
-		/if (${member}>-1) /target ${Group.Member[${member}].Name}
+		/if (${member}>-1) /target id ${Group.Member[${member}].Spawn.ID}
 
 	}
 /return
