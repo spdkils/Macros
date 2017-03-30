@@ -1,0 +1,30 @@
+#turbo
+Sub Main
+	/declare strSpell str local
+	/declare zzloop int local
+	/declare targetID int local ${Target.ID}
+	/declare myDelay int local 10
+	|- Pick Mez Spell
+	/call PickMez
+	/varset strSpell ${Macro.Return}
+	
+	/if (${SpawnCount[npc los radius 40 notid ${targetID}]}) {
+		/echo Attempting to mez ${SpawnCount[npc los radius 40 notid ${targetID}]} targets!
+		/for zzloop 1 to ${SpawnCount[npc los radius 40 notid ${targetID}]}
+			/attack off
+			/target ${NearestSpawn[${zzloop},npc los radius 40 notid ${targetID}]}
+			/delay 2
+			/cast ${strSpell}
+			/gsay !****MEZZING ${Target.Name} ******!
+			/delay 8s ${Me.SpellReady[${strSpell}]}
+		/next zzloop
+		/return
+	}
+/return
+| endsub
+
+Sub PickMez
+	/if (${Me.SpellReady[Dazzle]} != NULL) /return Dazzle
+	/if (${Me.SpellReady[Enthrall]} != NULL) /return Enthrall
+/return
+| endsub
