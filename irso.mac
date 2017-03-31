@@ -1,0 +1,46 @@
+#turbo
+|- This is a comment
+#EVENT Slow "Your #1# spell has worn off of #2#."
+
+
+
+Sub Main
+	/declare intTargetLife int local ${Target.PctHPs}
+	/declare intTargetID int outer ${Target.ID}
+	/declare BAD1 string outer "Stinging Swarm"
+	/declare BAD2 string outer "Snare"
+	/declare BAD3 string outer "NULL"
+	/declare BAD4 string outer "NULL"
+	/declare BAD5 string outer "NULL"
+	/declare GOOD1 string outer "NULL"
+	/declare GOOD2 string outer "NULL"
+	/declare GOOD3 string outer "NULL"
+	/declare GOOD4 string outer "NULL"
+	/declare GOOD5 string outer "NULL"
+	:TOP
+		|- Bad spells on target macro was run on
+		/if (${Spawn[id ${intTargetID}].Dead} == FALSE && ${intTargetID} > 0 && ${Spawn[id ${intTargetID}].Type.Equal[NPC]}) {
+			/if (${Me.CurrentMana} > ${Spell[${BAD1}].Mana} && ${Me.SpellReady[${BAD1}]} && ${SpellTimer[${intTargetID},${BAD1}]}<3) /casting ${BAD1} -targetid|${intTargetID}
+			/if (${Me.CurrentMana} > ${Spell[${BAD2}].Mana} && ${Me.SpellReady[${BAD2}]} && ${SpellTimer[${intTargetID},${BAD2}]}<3) /casting ${BAD2} -targetid|${intTargetID}
+			/if (${Me.CurrentMana} > ${Spell[${BAD3}].Mana} && ${Me.SpellReady[${BAD3}]} && ${SpellTimer[${intTargetID},${BAD3}]}<3) /casting ${BAD3} -targetid|${intTargetID}
+			/if (${Me.CurrentMana} > ${Spell[${BAD4}].Mana} && ${Me.SpellReady[${BAD4}]} && ${SpellTimer[${intTargetID},${BAD4}]}<3) /casting ${BAD4} -targetid|${intTargetID}
+		}
+
+		|- Good Buffs on myself
+		/if (!${Me.CombatState.Equal[Combat]}) {
+			/if (${Me.CurrentMana} > ${Spell[${GOOD1}].Mana} && ${Me.SpellReady[${GOOD1}]} && ${SpellTimer[${Me.ID},${GOOD1}]}<3) /casting ${GOOD1} -targetid|${Me.ID}
+			/if (${Me.CurrentMana} > ${Spell[${GOOD2}].Mana} && ${Me.SpellReady[${GOOD2}]} && ${SpellTimer[${Me.ID},${GOOD2}]}<3) /casting ${GOOD2} -targetid|${Me.ID}
+			/if (${Me.CurrentMana} > ${Spell[${GOOD3}].Mana} && ${Me.SpellReady[${GOOD3}]} && ${SpellTimer[${Me.ID},${GOOD3}]}<3) /casting ${GOOD3} -targetid|${Me.ID}
+			/if (${Me.CurrentMana} > ${Spell[${GOOD4}].Mana} && ${Me.SpellReady[${GOOD4}]} && ${SpellTimer[${Me.ID},${GOOD4}]}<3) /casting ${GOOD4} -targetid|${Me.ID}
+			/if (${Me.CurrentMana} > ${Spell[${GOOD5}].Mana} && ${Me.SpellReady[${GOOD5}]} && ${SpellTimer[${Me.ID},${GOOD5}]}<3) /casting ${GOOD5} -targetid|${Me.ID}
+		}
+		/doevents
+		/delay 1
+		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90) /sit
+	/if (TRUE) /GOTO :TOP
+/return
+| endsub
+
+Sub badguy
+/varset intTargetID ${Target.ID}
+/return

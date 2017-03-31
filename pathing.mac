@@ -1,0 +1,33 @@
+#turbo
+
+#EVENT PathAdded "Added Path Node: #1#"
+#EVENT DropNode "Auto attack is on."
+
+Sub Main
+	/declare intLastNode int outer 0
+:TOP
+	/doevents
+	/delay 1
+/goto :TOP
+
+/return
+| endsub
+
+Sub EVENT_PathAdded(strMsg,int intNode)
+	/target ${Spawn[npc los]}
+	/delay 1
+	/say #path connect ${intLastNode} 0 0
+	/delay 1
+	/varset intLastNode ${intNode}
+/return
+| endsub
+
+Sub EVENT_DropNode(strMsg)
+	/say #path add
+/return
+| endsub
+
+Sub JoinNodes(int NodeA, int NodeB)
+
+/return
+| endsub
