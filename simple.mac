@@ -1,9 +1,12 @@
 #Turbo
 
 #EVENT mobCast "#1# begins to cast a spell."
+#EVENT hateList "- name: #1#, damage: #2#, hate: #3#"
 
 
 Sub Main
+/declare intMyHate int outer 0
+/declare intTopHate int outer 0
 /echo Lame Assist
 /assist Gang
 /delay 3
@@ -21,9 +24,17 @@ Sub Main
 /attack on
 :TOP
 	/doevents
+	/if (${intTopHate} > 0) {
+	/bc ${intTopHate}
+	/varset intTopHate 0
+	}
 	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
-	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Desist"
+	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
+	/varset intTopHate 0
+	/say #hatelist
+	/cast "Desist"
+	}
 	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Cease"
 	/if (${Me.Casting.ID}) /bc I will not be ignored!
 	/delay 4s !${Me.Casting.ID}
@@ -73,3 +84,10 @@ Sub EVENT_mobCast(strFullmsg,strWho)
 	}
 /return
 | endsub
+
+sub EVENT_hateList(strFullmsg,strWho,int intDmg, int intHate)
+	/if (${intHate}>${intTopHate}) /varset intTopHate ${intHate}
+	/if (${Me.Name.Equal[${strWho}]}) /bc My hate == ${intHate}
+/return
+| endsub
+
