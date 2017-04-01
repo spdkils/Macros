@@ -1,20 +1,26 @@
 #Turbo
 
+|- This script expects you to execute it passing 2 parameters 1: Who the boss is, 2: Who to attack.
+|- --------------------------------------------------------------${Param0}           ${Param1}
+|- Example /mac simple ${Me.ID} ${Target.ID}
+|- If you want to use this via eqbc then it could look like this. /bct Eemo //mac simple ${Me.ID} ${Target.ID}
+|- Eemo will get this as a command.  /mac simple 534 292 (Just example numbers, depends on target, and zone)
+
 #EVENT mobCast "#1# begins to cast a spell."
 #EVENT hateList "- name: #1#, damage: #2#, hate: #3#"
 
 
 Sub Main
+/echo Lame Assist
 /declare intMyHate int outer 0
 /declare intTopHate int outer 0
 /declare strTopName string outer NULL
-/echo Lame Assist
 /target id ${Param1}
 /delay 2
 /declare myTarget int local ${Target.ID}
 /if (!${Target.ID}) /return
 /face fast
-/if (${Spawn[${Target.ID}].LineOfSight}) /stick 7 id ${Target.ID}
+/if (${Spawn[${Target.ID}].LineOfSight}) /stick 7 id ${Target.ID} loose
 /if (${Target.Type.Equal[PC]}) {
 	/attack off
 	/return
@@ -22,7 +28,6 @@ Sub Main
 /bc Attacking ${Target.Name}
 /declare caster bool local ${Target.Class.PureCaster}
 /if (!${caster}) /varset caster ${Target.Class.PetClass}
-/attack on
 :TOP
 	/attack on
 	/doevents
@@ -32,40 +37,43 @@ Sub Main
 	}
 	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
-	/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" gem1
+	/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light"
 	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
 		/varset intTopHate 0
 		/say #hatelist
 		/cast "Desist"
-		/delay 3s !${Me.Casting.ID}
+		/delay 4s !${Me.Casting.ID}
 		}
-	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Cease"
-	/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Stun"
+	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Cease" -targetid|${myTarget}
+	/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Stun" -targetid|${myTarget}
 	/if (${Me.Casting.ID}) /bc I will not be ignored!
 	/delay 4s !${Me.Casting.ID}
 	/if (${Me.PctHPs} < 31) {
 		/bc BAD NEWS!
 		/vgroup 007
-		/target myself
+		/if (${Cast.Ready[Lay on Hands]}) {
+			/casting "lay on hands" alt -targetid|${Me.ID}
+			/delay 2
+			/target id ${myTarget}
+		}
+		|- Manual way of doing it, going to use casting.
+		|- /target myself
+		|- /delay 2
+		|- /alt act 6001
 		/delay 2
-		/alt act 6001
-		/delay 2
-		/target ${Spawn[${myTarget}]}
-	}
+		}
 	
-	/if (${Spawn[id ${Param0}].PctHPs}<30 && ${Me.SpellReady[Light Healing]}) {
+	/if (${Spawn[id ${Param0}].PctHPs}<30 && ${Me.SpellReady[Healing]}) {
 		/stick off
-		/target id ${Param0}
-		/delay 2
-		/casting "Light Healing" -targetid|${Spawn[id ${Param0}]}
+		/casting "Healing" -targetid|${Param0}
 		/delay 4s !${Me.Casting.ID}
-		/target ${Spawn[${myTarget}]}
+		/target id ${myTarget}
 		/stick id ${myTarget}
 	}
 	/delay 2
-	/if (${myTarget} == ${Target.ID}) /GOTO :TOP
+	/if (${myTarget} == ${Target.ID} && !${Target.Dead}) /GOTO :TOP
 	/attack off
-	/stick id ${Param0}
+	/stick 7 id ${Param0} loose
 /return
 | endsub
 
