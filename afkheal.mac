@@ -10,13 +10,13 @@ Sub Main
 
 
 /if (${Param0.Equal[TRUE]}) {
-	/varset PCs ${SpawnCount[pc radius 100]}
+	/varset PCs ${SpawnCount[pc radius 99]}
 	/echo ${PCs}
 	/varset lowest 100
 	/for loop 1 to ${PCs}
-		/if (${NearestSpawn[${loop},pc radius 100].PctHPs} < ${lowest}) {
-			/varset lowest ${NearestSpawn[${loop},pc radius 100].PctHPs}
-			/varset member ${NearestSpawn[${loop},pc radius 100].ID}
+		/if (${NearestSpawn[${loop},pc radius 99].PctHPs} < ${lowest}) {
+			/varset lowest ${NearestSpawn[${loop},pc radius 99].PctHPs}
+			/varset member ${NearestSpawn[${loop},pc radius 99].ID}
 			}
 	/NEXT loop
 	/echo ${member}
