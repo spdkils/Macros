@@ -13,15 +13,15 @@ Sub Main
 	/declare intTargetLife int local ${Target.PctHPs}
 	/declare intTargetID int outer ${Target.ID}
 	/declare BAD[2] string outer NULL
-	/varset BAD[1] "Scourge"
-	/varset BAD[2] "Tagar's Insects"
+	/varset BAD[1] "Boil Blood"
+	/varset BAD[2] "Asystole"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intTargetID}].Dead} == FALSE && ${intTargetID} > 0 && ${Spawn[id ${intTargetID}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intTargetID},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intTargetID}
+				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intTargetID},${BAD[${loop}]}]}<4) /casting ${BAD[${loop}]} -targetid|${intTargetID}
 			/next loop
 		}
 

@@ -1,0 +1,5 @@
+#turbo
+
+Sub Main
+	/if (!${Me.Sitting}) /sit
+/return

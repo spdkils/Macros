@@ -1,0 +1,8 @@
+#turbo
+Sub Main
+	/declare MyArray[10] string outer NULL
+	/echo ${MyArray.Dimensions}
+	/echo ${MyArray.Size}
+	/echo ${MyArray[1]}
+/return
+| endsub

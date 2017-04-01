@@ -7,13 +7,14 @@
 Sub Main
 /declare intMyHate int outer 0
 /declare intTopHate int outer 0
+/declare strTopName string outer NULL
 /echo Lame Assist
-/assist Gang
-/delay 3
+/target id ${Param1}
+/delay 2
 /declare myTarget int local ${Target.ID}
 /if (!${Target.ID}) /return
 /face fast
-/if (${Spawn[${Target.ID}].LineOfSight}) /stick id ${Target.ID} 10
+/if (${Spawn[${Target.ID}].LineOfSight}) /stick 7 id ${Target.ID}
 /if (${Target.Type.Equal[PC]}) {
 	/attack off
 	/return
@@ -23,19 +24,23 @@ Sub Main
 /if (!${caster}) /varset caster ${Target.Class.PetClass}
 /attack on
 :TOP
+	/attack on
 	/doevents
 	/if (${intTopHate} > 0) {
-	/bc ${intTopHate}
-	/varset intTopHate 0
+		/bc ${strTopName} : ${intTopHate}
+		/varset intTopHate 0
 	}
 	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
+	/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" gem1
 	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
-	/varset intTopHate 0
-	/say #hatelist
-	/cast "Desist"
-	}
+		/varset intTopHate 0
+		/say #hatelist
+		/cast "Desist"
+		/delay 3s !${Me.Casting.ID}
+		}
 	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Cease"
+	/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /cast "Stun"
 	/if (${Me.Casting.ID}) /bc I will not be ignored!
 	/delay 4s !${Me.Casting.ID}
 	/if (${Me.PctHPs} < 31) {
@@ -48,11 +53,11 @@ Sub Main
 		/target ${Spawn[${myTarget}]}
 	}
 	
-	/if (${Spawn[pc Gang].PctHPs}<30 && ${Me.SpellReady[Light Healing]}) {
+	/if (${Spawn[id ${Param0}].PctHPs}<30 && ${Me.SpellReady[Light Healing]}) {
 		/stick off
-		/target ${Spawn[pc Gang].Name}
+		/target id ${Param0}
 		/delay 2
-		/cast "Light Healing"
+		/casting "Light Healing" -targetid|${Spawn[id ${Param0}]}
 		/delay 4s !${Me.Casting.ID}
 		/target ${Spawn[${myTarget}]}
 		/stick id ${myTarget}
@@ -60,7 +65,7 @@ Sub Main
 	/delay 2
 	/if (${myTarget} == ${Target.ID}) /GOTO :TOP
 	/attack off
-	/stick id ${Spawn[pc Gang].ID}
+	/stick id ${Param0}
 /return
 | endsub
 
@@ -86,7 +91,10 @@ Sub EVENT_mobCast(strFullmsg,strWho)
 | endsub
 
 sub EVENT_hateList(strFullmsg,strWho,int intDmg, int intHate)
-	/if (${intHate}>${intTopHate}) /varset intTopHate ${intHate}
+	/if (${intHate}>${intTopHate}) {
+		/varset intTopHate ${intHate}
+		/varset strTopName ${strWho}
+		}
 	/if (${Me.Name.Equal[${strWho}]}) /bc My hate == ${intHate}
 /return
 | endsub
