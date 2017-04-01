@@ -117,6 +117,7 @@ Sub NALLoadVar(IniSection,IniVar,IniValue,VarType)
 Sub FindAutoHate
     /declare i int local
     /for i 1 to 10
+	| for old versions use .Type, for new versions use .TargetType.
         /if (${Me.XTarget[${i}].Type.Equal[Auto Hater]}) {
             /varset AutoHater ${i}
             /echo NINJADVLOOT: AutoHater set to Xtarget${i}
