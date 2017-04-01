@@ -20,7 +20,7 @@ Sub Main
 /declare myTarget int local ${Target.ID}
 /if (!${Target.ID}) /return
 /face fast
-/if (${Spawn[${Target.ID}].LineOfSight}) /stick 7 id ${Target.ID} loose
+/if (${Spawn[${Target.ID}].LineOfSight}) /stick 9 id ${Target.ID} loose
 /if (${Target.Type.Equal[PC]}) {
 	/attack off
 	/return
@@ -68,7 +68,7 @@ Sub Main
 		/casting "Healing" -targetid|${Param0}
 		/delay 4s !${Me.Casting.ID}
 		/target id ${myTarget}
-		/stick id ${myTarget}
+		/stick 9 id ${myTarget} loose
 	}
 	/delay 2
 	/if (${myTarget} == ${Target.ID} && !${Target.Dead}) /GOTO :TOP
