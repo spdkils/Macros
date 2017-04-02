@@ -176,7 +176,7 @@ Sub Main
 Sub EVENT_BotLeave(fullMsg, botName)
 	/echo ${botName} left! WHY!
 	/say ^botspawn ${botName}
-	/delay 2
+	/delay 5
 	/invite ${botName}
 /return
 | endSub
@@ -349,8 +349,7 @@ Sub Wait
 		/if (${Group.Member[${healerSlot}].CurrentMana} > 80 && ${healerSlot}) /return
 		/if (!${Me.Sitting}) /sit
 		/delay 10s ${Me.CombatState.Equal[Combat]}
-		/goto :wait
-	:end
+	/goto :wait
 /return
 | endSub
 

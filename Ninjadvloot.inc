@@ -99,7 +99,6 @@ Sub SetupAdvLootVars(string ChangeIniFile)
     /call NALLoadVar Settings CombatLooting      0                   int
     /call FindAutoHate
     /echo NINJADVLOOT: Variables are set.
-
 /return
 | endsub
 
@@ -150,30 +149,30 @@ Sub LootMobs
     /next i
     /if (${Debugloot}) /echo DEBUGLOOT Trying to loot ${CorpseCount} corpses. ID's ${CorpseList}
     /for i 1 to ${CorpseCount} 
-    /varset CorpseToLoot ${CorpseList.Arg[${i},|]}
-    /if (!${Defined[CorpseLocked${CorpseToLoot}]}) /declare CorpseLocked${CorpseToLoot} timer outer 0
-        /if (${Spawn[${CorpseToLoot}].Deity.ID} || !${Spawn[${CorpseToLoot}].ID} || !${Spawn[${CorpseToLoot}].LineOfSight} || ${CorpseLocked${CorpseToLoot}} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting}) /goto :SkipCorpse
-            /if (${Target.ID}!=${CorpseToLoot}) /target id ${CorpseToLoot}
-            /if (!${Me.Standing}) /stand
-            /delay 3s ${Target.ID}==${CorpseToLoot} && ${Me.Standing}
-            /if (${Target.Distance}>5) {
-                /if (${Debugloot}) /echo DEBUGLOOT move to corpse
-                /moveto mdist 10
-                /moveto loc ${Target.Y} ${Target.X} ${Target.Z} 
-        /if (${Me.Mount.ID}) {
-            /delay 3s ${Math.Distance[${Target.Y},${Target.X}]}<25
-            /keypress back
-        }
-                /delay 3s ${MoveTo.Stopped} && !${Me.Moving}
-                /call ZCheck ${ZDist} 8
-                /if (${Target.ID}) /face fast
-            }
-            /if (${Target.Distance}<12) {
-                /if (${Debugloot}) /echo DEBUGLOOT /Call LootCorpse
-                /call LootCorpse ${Target.ID}
-                /call RemoveCorpseID ${CorpseToLoot}
-            }
-        :SkipCorpse
+        /varset CorpseToLoot ${CorpseList.Arg[${i},|]}
+        /if (!${Defined[CorpseLocked${CorpseToLoot}]}) /declare CorpseLocked${CorpseToLoot} timer outer 0
+            /if (${Spawn[${CorpseToLoot}].Deity.ID} || !${Spawn[${CorpseToLoot}].ID} || !${Spawn[${CorpseToLoot}].LineOfSight} || ${CorpseLocked${CorpseToLoot}} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting}) /goto :SkipCorpse
+                /if (${Target.ID}!=${CorpseToLoot}) /target id ${CorpseToLoot}
+                /if (!${Me.Standing}) /stand
+                /delay 3s ${Target.ID}==${CorpseToLoot} && ${Me.Standing}
+                /if (${Target.Distance}>5) {
+                    /if (${Debugloot}) /echo DEBUGLOOT move to corpse
+                    /moveto mdist 10
+                    /moveto loc ${Target.Y} ${Target.X} ${Target.Z} 
+                        /if (${Me.Mount.ID}) {
+                            /delay 3s ${Math.Distance[${Target.Y},${Target.X}]}<25
+                            /keypress back
+                        }
+                    /delay 3s ${MoveTo.Stopped} && !${Me.Moving}
+                    /call ZCheck ${ZDist} 8
+                    /if (${Target.ID}) /face fast
+                }
+                /if (${Target.Distance}<12) {
+                    /if (${Debugloot}) /echo DEBUGLOOT /Call LootCorpse
+                    /call LootCorpse ${Target.ID}
+                    /call RemoveCorpseID ${CorpseToLoot}
+                }
+            :SkipCorpse
     /next i
     /if (${Debugloot}) /echo DEBUGLOOT Leave Subs LootMobs 
 /return

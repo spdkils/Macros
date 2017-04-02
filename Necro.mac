@@ -1,15 +1,11 @@
 #turbo
 |- This is a comment
-#EVENT Slow "Your #1# spell has worn off of #2#."
-
-
 
 Sub Main
 	/target id ${Param1}
 	/delay 3
 	/pet attack
 	/face fast
-	/declare myTarget int local ${Target.ID}
 	/declare intTargetLife int local ${Target.PctHPs}
 	/declare intTargetID int outer ${Target.ID}
 	/declare BAD[2] string outer NULL
@@ -26,18 +22,14 @@ Sub Main
 		}
 
 		|- Good Buffs on myself
-		/if (!${Me.CombatState.Equal[Combat]}) {
+		/if (!${Me.CombatState.Equal[COMBAT]}) {
 			/for loop 1 to ${GOOD.Size}
-				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<3) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
+				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
 		/doevents
 		/delay 1
 		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[${Target.ID}].Distance} > ${Spawn[${Target.ID}].MaxRange}) /sit
-	/if (${myTarget} == ${Target.ID}) /GOTO :TOP
+	/if (${intTargetID} == ${Target.ID}) /GOTO :TOP
 /return
 | endsub
-
-Sub badguy
-/varset intTargetID ${Target.ID}
-/return
