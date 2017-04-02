@@ -2,9 +2,11 @@
 |- This is a comment
 
 Sub Main
+	/stick off
 	/target id ${Param1}
-	/delay 3
+	/delay 4
 	/pet attack
+	/delay 3s
 	/face fast
 	/declare intTargetLife int local ${Target.PctHPs}
 	/declare intTargetID int outer ${Target.ID}

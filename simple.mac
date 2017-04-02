@@ -31,6 +31,7 @@ Sub Main
 :TOP
 	/attack on
 	/doevents
+	/face fast
 	/if (${intTopHate} > 0) {
 		/bc ${strTopName} : ${intTopHate}
 		/varset intTopHate 0

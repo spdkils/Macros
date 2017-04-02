@@ -5,9 +5,11 @@
 
 
 Sub Main
+	/stick off
 	/target id ${Param1}
-	/delay 3
+	/delay 4
 	/pet attack
+	/delay 3s
 	/face fast
 	/declare myTarget int local ${Target.ID}
 	/declare intTargetLife int local ${Target.PctHPs}
