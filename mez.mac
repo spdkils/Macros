@@ -1,7 +1,6 @@
 #turbo
 Sub Main
 	/echo Mezzing
-	/declare strSpell str local
 	/declare zzloop int local
 	/declare targetID int local ${Target.ID}
 	/declare myDelay int local 10
@@ -12,21 +11,15 @@ Sub Main
 	/if (${SpawnCount[npc los radius 40 notid ${Target.ID}]}) {
 	/for zzloop 1 to ${SpawnCount[npc los radius 40 notid ${Target.ID}]}
 		/attack off
-		/target ${NearestSpawn[${zzloop},npc los radius 40 notid ${Target.ID}]}
+		/target ID ${NearestSpawn[${zzloop},npc los radius 40 notid ${targetID}].ID}
 		/delay 1
 		/say ^mez
 		/delay 1
-		/target ${Spawn[${targetID}]}
+		/target ID ${targetID}
 		/attack on
 		/delay 25
 	/next zzloop
 	/return
 	}
-	|/say Nothing to mez
 /return
-| endsub
 
-Sub PickMez
-	/if (${Me.SpellReady[Enthrall]} != NULL) /return Enthrall
-/return
-| endsub

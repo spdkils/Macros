@@ -1,14 +1,13 @@
-|- Follow
-
+#TURBO
+|------------
+|- Loops group members spacing them out if they are bots.
+|-
 Sub Main
 	/if (!${Group}) /return
-	/declare loop int outer
+	/declare loop int local
 	/for loop 1 to ${Group}
-			/target ${Group.Member[${loop}].Name}
-			/delay 2
-			|/echo ${Math.Calc[(${loop}*75)+50]}
-			/say ^botfollowdistance set ${Math.Calc[(${loop}*75)+50]}
+		/target ID ${Group.Member[${loop}].ID}
+		/delay 2
+		/say ^botfollowdistance set ${Math.Calc[(${loop}*75)+50]}
 	/next loop
-
 /return
-| endsub

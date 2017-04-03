@@ -1,4 +1,6 @@
-sub main
+#TURBO
+
+Sub main
 /declare healspell 	string 	outer "Minor Healing"
 /declare healgem 	int 	outer 1
 /declare healpercent 	int 	outer 80

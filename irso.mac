@@ -1,18 +1,23 @@
-#turbo
-|- This is a comment
-#EVENT Slow "Your #1# spell has worn off of #2#."
+#TURBO
+|-----------------
+|- Built this for Irso Stoopid (Shaman)
+|-
+|-----------------
+|- Requires MQ2Cast & MQ2CastTimer
 
 
-
-Sub Main
+Sub Main(int intCommander, int intBadGuy)
 	/stick off
-	/target id ${Param1}
-	/delay 4
+	:targetwait
+	/if (!${Spawn[id ${intBadGuy}].ID}) /return
+	/target id ${intBadGuy}
+	/delay 1
+	/if (${Target.ID} != ${intBadGuy}) /GOTO :targetwait
 	/pet attack
 	/delay 3s
 	/pet attack
 	/face fast
-	/declare intTargetID int outer ${Param1}
+	/declare intTargetID int outer ${intBadGuy}
 	/declare BAD[2] string outer NULL
 	/varset BAD[1] "Scourge"
 	/varset BAD[2] "Tagar's Insects"

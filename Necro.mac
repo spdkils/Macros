@@ -1,16 +1,18 @@
 #turbo
 |- This is a comment
 
-Sub Main
+Sub Main(int intCommander, int intBadGuy)
 	/stick off
-	/target id ${Param1}
-	/delay 4
+	:targetwait
+	/if (!${Spawn[id ${intBadGuy}].ID}) /return
+	/target id ${intBadGuy}
+	/delay 1
+	/if (${Target.ID} != ${intBadGuy}) /GOTO :targetwait
 	/pet attack
 	/delay 3s
 	/pet attack
 	/face fast
 	/declare intTargetLife int local ${Target.PctHPs}
-	/declare intTargetID int outer ${Param1}
 	/declare BAD[2] string outer NULL
 	/varset BAD[1] "Boil Blood"
 	/varset BAD[2] "Asystole"
@@ -18,9 +20,9 @@ Sub Main
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
-		/if (${Spawn[id ${intTargetID}].PctHPs} > 20 && ${Spawn[id ${intTargetID}].Dead} == FALSE && ${intTargetID} > 0 && ${Spawn[id ${intTargetID}].Type.Equal[NPC]}) {
+		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intTargetID},${BAD[${loop}]}]}<4) /casting ${BAD[${loop}]} -targetid|${intTargetID}
+				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
 			/next loop
 		}
 
@@ -32,7 +34,7 @@ Sub Main
 		}
 		/doevents
 		/delay 1
-		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[${Target.ID}].Distance} > ${Spawn[${Target.ID}].MaxRange}) /sit
-	/if (${intTargetID} == ${Target.ID}) /GOTO :TOP
+		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
+	/if (${intBadGuy} == ${Target.ID}) /GOTO :TOP
 /return
-| endsub
+

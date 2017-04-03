@@ -1,5 +1,5 @@
-#turbo
-sub main
+#TURBO
+Sub Main
 	:TOP
     /if (${Cursor.ID}) /autoinventory
     /delay 5s ${Window[TradeskillWnd].Child[COMBW_CombineButton].Enabled}

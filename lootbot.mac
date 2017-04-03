@@ -1,11 +1,10 @@
-#Turbo
+#TURBO
 #include Ninjadvloot.inc
 
 Sub Main
-/call SetupAdvLootVars
-
-:TOP
-/call LootMobs
-/delay 10s
-/goto :TOP
+	/call SetupAdvLootVars
+	:TOP
+		/call LootMobs
+		/delay 10s
+	/goto :TOP
 /return

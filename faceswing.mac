@@ -1,8 +1,0 @@
-#turbo
-Sub Main
-	/target ${Spawn[npc radius 80 zradius 20]
-	/attack on
-	/face
-	/delay 10s
-/return
-| endsub

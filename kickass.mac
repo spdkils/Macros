@@ -1,18 +1,14 @@
-
+#TURBO
 Sub Main
-
 	:TOP
-	
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Flying Kick]}) /doability "Flying Kick"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
-	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Slam]} && ${Me.Ability[1].Equal[Slam]}) /doability 1
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Bash]}) /doability "Bash"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Kick]}) /doability "Kick"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Thunderkick]}) /doability "Thunderkick"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Innerflame Discipline]}) /doability "Innerflame Discipline"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Stonestance Discipline]}) /doability "Stonestance Discipline"
-
-	/delay 2
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Flying Kick]}) /doability "Flying Kick"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Slam]} && ${Me.Ability[1].Equal[Slam]}) /doability 1
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Bash]}) /doability "Bash"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Kick]}) /doability "Kick"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Thunderkick]}) /doability "Thunderkick"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Innerflame Discipline]}) /doability "Innerflame Discipline"
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.CombatAbilityReady[Stonestance Discipline]}) /doability "Stonestance Discipline"
+		/delay 2
 	/goto :TOP
 /return
-| endsub
