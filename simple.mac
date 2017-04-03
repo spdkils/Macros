@@ -54,7 +54,7 @@ Sub Main
 		/vgroup 007
 		/if (${Cast.Ready[Lay on Hands]}) {
 			/casting "lay on hands" alt -targetid|${Me.ID}
-			/delay 2
+			/delay 4
 			/target id ${myTarget}
 		}
 		|- Manual way of doing it, going to use casting.
