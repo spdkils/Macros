@@ -21,6 +21,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
+		/call Feign_Death
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
@@ -36,13 +37,26 @@ Sub Main(int intCommander, int intBadGuy)
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
-		/if (${Me.PctHPs}<25) {
-			/casting "feign Death"
-			/delay 30s
-		}
+
 		/doevents
 		/delay 1
-		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
+		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange} && !${Me.Feigning}) /sit
 	/if (${intBadGuy} == ${Target.ID}) /GOTO :TOP
 /return
 
+Sub Feign_Death
+	:STAYDOWN
+	/if (${Me.Feigning}) {
+		/if (${Me.PctHPs} > 80 && ${Me.SpellReady[Feign Death]}) /stand
+		/delay 1s
+		/goto :STAYDOWN
+	}
+	/if (${Me.PctHPs} <= 30) {
+		/delay 3s ${Me.SpellReady[Feign Death]}
+		/if (${Me.CurrentMana} >= ${Spell[Feign Death].Mana} && !${Me.Feigning}) {
+			/gsay Playing Dead
+			/casting "feign Death"
+		}
+	}
+
+/return
