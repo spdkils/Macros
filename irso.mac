@@ -37,13 +37,14 @@ Sub Main(int intCommander, int intBadGuy)
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
+		/call SpotHeal 50 100
+		|     Life  %--^  ^---Range
 		/call Cannibalize
-		/delay 2
+		/delay 1
 		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
 	/if (${Spawn[id ${intBadGuy}].ID} && !${Spawn[id ${intBadGuy}].Dead}) /GOTO :TOP
 	:MANA
 	/call Cannibalize
-	/echo ${Macro.Return}
 	/if (${Macro.Return.Equal[TRUE]}) /GOTO :MANA
 /return
 
@@ -55,3 +56,26 @@ Sub Cannibalize
 		/return TRUE
 	}
 /return FALSE
+
+Sub SpotHeal(int intHealThreshold, int intSpellRange)
+	/declare intLoop int local 0
+	/declare intPctHPs int local 100
+	/declare intTargetID int local 0
+	/declare strHealSpell string local "Greater Healing"
+	| Check group health
+	/for intLoop 0 to ${Group}
+		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {
+			/varset intPctHPs ${Group.Member[${intLoop}].PctHPs}
+			/varset intTargetID ${Group.Member[${intLoop}].ID}
+		}
+	/next intLoop
+	| Check to see if they are in range, and meet the threshold for a heal.}
+	/if (${Spawn[id ${intTargetID}].Distance} < ${intSpellRange} && ${intPctHPs} <= ${intHealThreshold} && ${Me.CurrentMana} > ${Spell[${strHealSpell}].Mana}) {
+		/delay 3s ${Me.SpellReady[${strHealSpell}]}
+		/if (${Me.SpellReady[${strHealSpell}]}) {
+			/gsay Casting ${strHealSpell} on ${Spawn[id ${intTargetID}].Name}
+			/casting ${strHealSpell} -targetid|${intTargetID}
+			/delay 12s !${Me.Casting.ID}
+		}
+	}
+/return
