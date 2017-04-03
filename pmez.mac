@@ -11,7 +11,7 @@ Sub Main
 		/echo Attempting to mez ${SpawnCount[npc los radius 40 notid ${targetID}]} targets!
 		/for zzloop 1 to ${SpawnCount[npc los radius 40 notid ${targetID}]}
 			/attack off
-			/casting ${strSpell} -targetid|${NearestSpawn[${zzloop},npc los radius 40 notid ${targetID}].ID}
+			/casting ${strSpell} -targetid|${NearestSpawn[${zzloop},npc los radius 40 notid ${targetID}}
 			/gsay !****MEZZING ${Target.Name} ******!
 			/delay 8s ${Me.SpellReady[${strSpell}]}
 		/next zzloop

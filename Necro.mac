@@ -13,15 +13,18 @@ Sub Main(int intCommander, int intBadGuy)
 	/pet attack
 	/face fast
 	/declare intTargetLife int local ${Target.PctHPs}
-	/declare BAD[2] string outer NULL
+	/declare BAD[4] string outer NULL
 	/varset BAD[1] "Boil Blood"
 	/varset BAD[2] "Asystole"
+	/varset BAD[3] "Scourge"
+	/varset BAD[4] "Engulfing Darkness"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
+				/delay 2s ${Me.SpellReady[${BAD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
 			/next loop
 		}
@@ -29,8 +32,13 @@ Sub Main(int intCommander, int intBadGuy)
 		|- Good Buffs on myself
 		/if (!${Me.CombatState.Equal[COMBAT]}) {
 			/for loop 1 to ${GOOD.Size}
+				/delay 2s ${Me.SpellReady[${GOOD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
+		}
+		/if (${Me.PctHPs}<25) {
+			/casting "feign Death"
+			/delay 30s
 		}
 		/doevents
 		/delay 1

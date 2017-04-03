@@ -17,33 +17,41 @@ Sub Main(int intCommander, int intBadGuy)
 	/delay 3s
 	/pet attack
 	/face fast
-	/declare intTargetID int outer ${intBadGuy}
-	/declare BAD[2] string outer NULL
-	/varset BAD[1] "Scourge"
-	/varset BAD[2] "Tagar's Insects"
+	/declare BAD[3] string outer NULL
+	/varset BAD[2] "Venom of the snake"
+	/varset BAD[3] "Scourge"
+	/varset BAD[1] "Togor's Insects"
 	/declare GOOD[1] string outer "Regeneration"
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
-		/if (${Spawn[id ${intTargetID}].PctHPs} > 20 && ${Spawn[id ${intTargetID}].Dead} == FALSE && ${intTargetID} > 0 && ${Spawn[id ${intTargetID}].Type.Equal[NPC]}) {
+		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intTargetID},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intTargetID}
+				/delay 2s ${Me.SpellReady[${BAD[${loop}]}]}
+				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
 			/next loop
 		}
-
-		|- Good Buffs on myself
-		/if (!${Me.CombatState.Equal[Combat]}) {
+		/if (${Me.CombatState.Equal[Combat]}) {
 			/for loop 1 to ${GOOD.Size}
+				/delay 2s ${Me.SpellReady[${GOOD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
 		/call Cannibalize
-		/delay 1
-		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intTargetID}].Distance} > ${Spawn[id ${intTargetID}].MaxRange}) /sit
-	/if (${intTargetID} == ${Target.ID}) /GOTO :TOP
+		/delay 2
+		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
+	/if (${Spawn[id ${intBadGuy}].ID} && !${Spawn[id ${intBadGuy}].Dead}) /GOTO :TOP
+	:MANA
+	/call Cannibalize
+	/echo ${Macro.Return}
+	/if (${Macro.Return.Equal[TRUE]}) /GOTO :MANA
 /return
-| endsub
 
 Sub Cannibalize
-	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize]}) /casting "Cannibalize"
-/return
+	/delay 12s ${Me.SpellReady[Cannibalize II]}
+	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize II]}) {
+		/casting "Cannibalize II"
+		/delay 12s ${Me.SpellReady[Cannibalize II]}
+		/return TRUE
+	}
+/return FALSE
