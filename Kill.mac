@@ -164,7 +164,7 @@ Sub Main
 		  /delay 2s
 		  /goto :Top
 	  }
-	  /squelch /target ${Spawn[${targetid}]}
+	  /squelch /target id ${targetid}
 	|--------> Won't target stuff too high level now, change the level via command.
 	  /if (${Target.ID} != NULL) /call Pull
 	  /if (${Macro.Return.Equal[ATTACK]}) /call Attack

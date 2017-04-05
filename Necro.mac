@@ -40,8 +40,8 @@ Sub Main(int intCommander, int intBadGuy)
 
 		/doevents
 		/delay 1
-		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange} && !${Me.Feigning}) /sit
-	/if (${intBadGuy} == ${Target.ID}) /GOTO :TOP
+		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && (${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange} || ${Spawn[id ${intBadGuy}].Dead}) && !${Me.Feigning}) /sit
+	/if (${Spawn[id ${intBadGuy}].ID} && !${Spawn[id ${intBadGuy}].Dead}) /GOTO :TOP
 /return
 
 Sub Feign_Death

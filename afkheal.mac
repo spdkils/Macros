@@ -20,7 +20,7 @@ Sub Main
 			}
 	/NEXT loop
 	/echo ${member}
-	/target ${Spawn[${member}].Name}
+	/target id ${member}
 	/return
 }
 	/if (${Group} > 0) {

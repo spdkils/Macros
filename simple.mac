@@ -31,24 +31,30 @@ Sub Main
 :TOP
 	/attack on
 	/doevents
-	/face fast
+	/if (${Target.CleanName.NotEqual[${Me.Name}]}) /face fast
 	/if (${intTopHate} > 0) {
 		/bc ${strTopName} : ${intTopHate}
 		/varset intTopHate 0
 	}
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
-	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
-	/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light"
-	/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
-		/varset intTopHate 0
-		/say #hatelist
-		/cast "Desist"
+	/if (${Target.Type.Equal[NPC]}) {
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
+		/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
+		/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light"
+		/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
+			/keypress forward hold
+			/delay 1
+			/keypress forward
+			/face fast
+			/varset intTopHate 0
+			/say #hatelist
+			/cast "Desist"
+			/delay 4s !${Me.Casting.ID}
+			}
+		/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Cease" -targetid|${myTarget}
+		/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Stun" -targetid|${myTarget}
+		/if (${Me.Casting.ID}) /bc I will not be ignored!
 		/delay 4s !${Me.Casting.ID}
-		}
-	/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Cease" -targetid|${myTarget}
-	/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Stun" -targetid|${myTarget}
-	/if (${Me.Casting.ID}) /bc I will not be ignored!
-	/delay 4s !${Me.Casting.ID}
+	}
 	/if (${Me.PctHPs} < 31) {
 		/bc BAD NEWS!
 		/vgroup 007
@@ -72,7 +78,7 @@ Sub Main
 		/stick 9 id ${myTarget} loose
 	}
 	/delay 2
-	/if (${myTarget} == ${Target.ID} && !${Target.Dead}) /GOTO :TOP
+	/if (!${Spawn[id ${myTarget}].Dead} && ${Spawn[id ${myTarget}].ID}) /GOTO :TOP
 	/attack off
 	/stick 7 id ${Param0} loose
 /return
@@ -99,7 +105,7 @@ Sub EVENT_mobCast(strFullmsg,strWho)
 /return
 | endsub
 
-sub EVENT_hateList(strFullmsg,strWho,int intDmg, int intHate)
+sub EVENT_hateList(string strFullmsg,string strWho,int intDmg, int intHate)
 	/if (${intHate}>${intTopHate}) {
 		/varset intTopHate ${intHate}
 		/varset strTopName ${strWho}

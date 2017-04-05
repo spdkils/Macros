@@ -37,7 +37,7 @@ Sub Main(int intCommander, int intBadGuy)
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
-		/call SpotHeal 50 100
+		/call SpotHeal 30 100
 		|     Life  %--^  ^---Range
 		/call Cannibalize
 		/delay 1
@@ -49,6 +49,10 @@ Sub Main(int intCommander, int intBadGuy)
 /return
 
 Sub Cannibalize
+	/if (${Me.CombatState.Equal[Active]}) {
+		/if (!${Me.Sitting}) /sit
+		/return FALSE
+	}
 	/delay 12s ${Me.SpellReady[Cannibalize II]}
 	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize II]}) {
 		/casting "Cannibalize II"
