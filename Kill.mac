@@ -468,7 +468,7 @@ Sub Ranger
 	/varset snared FALSE
 	/face fast
 	/squelch /stick 70% moveback
-:RANGERTOP
+ :RANGERTOP
 	/doevents chatInput
 	/doevents snare
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
@@ -498,7 +498,7 @@ Sub ShadowKnight
 	/varset snared FALSE
 	/face fast
 	/squelch /stick 70% moveback
-:SKTOP
+ :SKTOP
 	/doevents chatInput
 	/doevents snare
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
@@ -528,7 +528,8 @@ Sub Nuke
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
 	/declare nukeTarget int local ${Target.ID}
 	/declare badGuyCount int local
-:NUKETOP
+	/if (${Me.Name.Equal[Gang]}) /keypress 1
+ :NUKETOP
 	/varset badGuyCount 0
 	/say ^attack all
 	/attack on
@@ -562,7 +563,7 @@ Sub Nuke
 | endsub
 
 Sub Shissar
-/declare ShissLoop int local
+ /declare ShissLoop int local
 	/if (${FindItem[Staff of the Serpent].ID}) {
 		/if (!${Me.Buff[Speed of the Shissar].Name.Equal[Speed of the Shissar]}) {
 			/for ShissLoop 0 to ${Group}
@@ -576,8 +577,8 @@ Sub Shissar
 		}
 	}
 	
-/if (${Me.SpellReady[Boon of the Clear Mind]} && !${Me.Buff[Boon of the Clear Mind].Name.Equal[Boon of the clear mind]}) /cast "Boon of the clear mind"
-/delay 3s
+ /if (${Me.SpellReady[Boon of the Clear Mind]} && !${Me.Buff[Boon of the Clear Mind].Name.Equal[Boon of the clear mind]}) /cast "Boon of the clear mind"
+ /delay 3s
 /return
 | endsub
 
@@ -587,7 +588,7 @@ Sub Melee
 	/declare myTarget int local ${Target.ID}
 	/face fast
 	/squelch /stick 70% moveback
-:MELEETOP
+ :MELEETOP
 	/doevents chatInput
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
 	/attack on
@@ -600,7 +601,7 @@ Sub Melee
 	/delay 1s
 	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :MELEETOP
 /return
-| endsub
+
 
 Sub Rogue
 	/if (${Debug}>1) /echo Rogue Loop
@@ -608,7 +609,7 @@ Sub Rogue
 	/varset myTarget ${Target.ID}
 	/squelch /stick snaproll loose
 	/look 0
-:RogueTop
+ :RogueTop
 	/doevents chatInput
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
 	/if (${Me.TargetOfTarget.Name.NotEqual[${Me.Name}]}) /squelch /stick snaproll loose

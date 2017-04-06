@@ -15,6 +15,7 @@ Sub Main
 /declare intMyHate int outer 0
 /declare intTopHate int outer 0
 /declare strTopName string outer NULL
+/declare aids bool outer true
 /target id ${Param1}
 /delay 2
 /declare myTarget int local ${Target.ID}
@@ -29,6 +30,7 @@ Sub Main
 /declare caster bool local ${Target.Class.PureCaster}
 /if (!${caster}) /varset caster ${Target.Class.PetClass}
 :TOP
+	/if (${Me.PctHPs} > 30) /varset aids true
 	/attack on
 	/doevents
 	/if (${Target.CleanName.NotEqual[${Me.Name}]}) /face fast
@@ -41,13 +43,15 @@ Sub Main
 		/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
 		/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && !${Me.AbilityReady[Taunt]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light"
 		/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
-			/keypress forward hold
-			/delay 1
-			/keypress forward
+			/if (${SpellTimer[${myTarget},Flash of Light]}) {
+				/keypress forward hold
+				/delay 1
+				/keypress forward
+			}
 			/face fast
 			/varset intTopHate 0
 			/say #hatelist
-			/cast "Desist"
+			/casting "Desist"
 			/delay 4s !${Me.Casting.ID}
 			}
 		/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Cease" -targetid|${myTarget}
@@ -57,7 +61,8 @@ Sub Main
 	}
 	/if (${Me.PctHPs} < 31) {
 		/bc BAD NEWS!
-		/vgroup 007
+		/if (${aids})	/vgroup 007
+		/varset aids false
 		/if (${Cast.Ready[Lay on Hands]}) {
 			/casting "lay on hands" alt -targetid|${Me.ID}
 			/delay 4
@@ -100,6 +105,7 @@ Sub EVENT_mobCast(strFullmsg,strWho)
 		/cast "Desist"
 		/bc No CAST!
 		/delay 4s !${Me.Casting.ID}
+		${Group.Member[1].Name}
 		/return
 	}
 /return

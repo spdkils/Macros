@@ -27,7 +27,7 @@ Sub Main(int intCommander, int intBadGuy)
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/delay 2s ${Me.SpellReady[${BAD[${loop}]}]}
+				/delay 3s ${Me.SpellReady[${BAD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
 			/next loop
 		}
