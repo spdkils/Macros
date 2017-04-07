@@ -5,8 +5,8 @@ Sub Main
 	/declare targetID int local ${Target.ID}
 	/declare myDelay int local 10
 	|- Pick Mez Spell
-	/call PickMez
-	/varset strSpell ${Macro.Return}
+	|/call PickMez
+	|/varset strSpell ${Macro.Return}
 	
 	/if (${SpawnCount[npc los radius 40 notid ${Target.ID}]}) {
 	/for zzloop 1 to ${SpawnCount[npc los radius 40 notid ${Target.ID}]}
