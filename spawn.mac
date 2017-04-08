@@ -3,8 +3,7 @@
 #EVENT botSpawn "#1# is a level #2# #*# Male #3#"
 
 Sub Main
-	/declare spawnCount int outer
-	/varset spawnCount 0
+	/declare intMembers int outer 0
 	/say ^botlist
 	/delay 5
 	/doevents
@@ -12,11 +11,12 @@ Sub Main
 | endsub
 
 Sub EVENT_botSpawn(strFull, strName, strJunk, strClass)
-	/if (${spawnCount} < 5) {
+	/if (${Group} < 5) {
+		/varset intMembers ${Group}
 		/say ^botspawn ${strName}
 		/delay 2
 		/invite ${strName}
-		/varcalc spawnCount ${spawnCount}+1
+		/delay 1s (${Group} > ${intMembers})
 	}
 /return
 | endsub

@@ -17,17 +17,16 @@ Sub Main(int intCommander, int intBadGuy)
 	/delay 3s
 	/pet attack
 	/face fast
-	/declare BAD[3] string outer NULL
-	/varset BAD[2] "Venom of the snake"
-	/varset BAD[3] "Scourge"
-	/varset BAD[1] "Togor's Insects"
-	/declare GOOD[1] string outer "Regeneration"
+	/declare BAD[2] string outer NULL
+	/varset BAD[1] "Snare"
+	/varset BAD[2] "Flame Lick"
+	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/call SpotHeal 30 100
+				/call SpotHeal 50 100
 				|     Life  %--^  ^---Range
 				/delay 3s ${Me.SpellReady[${BAD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
@@ -39,35 +38,20 @@ Sub Main(int intCommander, int intBadGuy)
 				/if (${Me.CurrentMana} > ${Spell[${GOOD[${loop}]}].Mana} && ${Me.SpellReady[${GOOD[${loop}]}]} && ${SpellTimer[${Me.ID},${GOOD[${loop}]}]}<20) /casting ${GOOD[${loop}]} -targetid|${Me.ID}
 			/next loop
 		}
-		/call SpotHeal 30 100
+		/call SpotHeal 70 100
 		|     Life  %--^  ^---Range
-		/call Cannibalize
 		/delay 1
 		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
 	/if (${Spawn[id ${intBadGuy}].ID} && !${Spawn[id ${intBadGuy}].Dead}) /GOTO :TOP
-	:MANA
-	/call Cannibalize
-	/if (${Macro.Return.Equal[TRUE]}) /GOTO :MANA
+	/echo ENDING MACRO
 /return
 
-Sub Cannibalize
-	/if (${Me.CombatState.Equal[Active]}) {
-		/if (!${Me.Sitting}) /sit
-		/return FALSE
-	}
-	/delay 12s ${Me.SpellReady[Cannibalize II]}
-	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize II]}) {
-		/casting "Cannibalize II"
-		/delay 12s ${Me.SpellReady[Cannibalize II]}
-		/return TRUE
-	}
-/return FALSE
 
 Sub SpotHeal(int intHealThreshold, int intSpellRange)
 	/declare intLoop int local 0
 	/declare intPctHPs int local 100
 	/declare intTargetID int local 0
-	/declare strHealSpell string local "Greater Healing"
+	/declare strHealSpell string local "Minor Healing"
 	| Check group health
 	/for intLoop 0 to ${Group}
 		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {
@@ -82,7 +66,7 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 			/gsay Casting ${strHealSpell} on ${Spawn[id ${intTargetID}].Name}
 			/casting ${strHealSpell} -targetid|${intTargetID}
 			/delay 12s !${Me.Casting.ID}
-			/call SpotHeal
+			/call SpotHeal 70 100
 		}
 	}
 /return
