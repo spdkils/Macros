@@ -38,7 +38,7 @@ Sub Main
 		/next innerloop
 		}
 /next loop
-/return
+|/return
 
 :REPEAT
 /varset boolSwap FALSE
