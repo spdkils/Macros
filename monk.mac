@@ -1,0 +1,55 @@
+#Turbo
+
+|- This script expects you to execute it passing 2 parameters 1: Who the boss is, 2: Who to attack.
+|- --------------------------------------------------------------${Param0}           ${Param1}
+|- Example /mac simple ${Me.ID} ${Target.ID}
+|- If you want to use this via eqbc then it could look like this. /bct Eemo //mac simple ${Me.ID} ${Target.ID}
+|- Eemo will get this as a command.  /mac simple 534 292 (Just example numbers, depends on target, and zone)
+
+
+Sub Main
+	/echo Lame Assist
+	/declare intMyHate int outer 0
+	/declare intTopHate int outer 0
+	/declare strTopName string outer NULL
+	/declare aids bool outer true
+	/declare myTarget int local ${Param1}
+	/target id ${myTarget}
+	:WAITFORTARGET
+		/delay 1
+	/if (${Target.ID} != ${myTarget} && ${Spawn[id ${myTarget}].ID} && !${Spawn[id ${myTarget}].Dead}) /goto :WAITFORTARGET
+	/if (!${Target.ID}) /return
+	/face fast
+	/if (${Spawn[id ${myTarget}].LineOfSight}) /stick 9 id ${myTarget} loose
+	/if (${Target.Type.Equal[PC]}) {
+		/attack off
+		/return
+	 }
+	/bc Attacking ${Target.Name}
+	/declare caster bool local ${Target.Class.PureCaster}
+	/if (!${caster}) /varset caster ${Target.Class.PetClass}
+	:TOP
+		/if (${Me.PctHPs} > 30) /varset aids true
+		/attack on
+		/doevents
+		/face fast id ${myTarget}
+		/if (${intTopHate} > 0) {
+			/bc ${strTopName} : ${intTopHate}
+			/varset intTopHate 0
+		}
+		/if (${Target.Type.Equal[NPC]}) {
+			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Tiger Claw]}) /doability "Tiger Claw"
+			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Round Kick]}) /doability "Round Kick"
+		}
+		/if (${Me.PctHPs} < 31) {
+			/bc BAD NEWS!
+			/if (${aids})	/vgroup 007
+			/varset aids false
+			/if (${Me.AbilityReady[Mend]}) /doability "Mend"
+		}
+		
+		/delay 1
+		/if (!${Spawn[id ${myTarget}].Dead} && ${Spawn[id ${myTarget}].ID}) /GOTO :TOP
+	/attack off
+	/stick 7 id ${Param0} loose
+/return

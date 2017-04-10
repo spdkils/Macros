@@ -1,6 +1,6 @@
 #TURBO
 |-----------------
-|- Built this for Irso Stoopid (Shaman)
+|- Built this for Lyft (Druid)
 |-
 |-----------------
 |- Requires MQ2Cast & MQ2CastTimer
@@ -9,10 +9,15 @@
 Sub Main(int intCommander, int intBadGuy)
 	/stick off
 	:targetwait
-	/if (!${Spawn[id ${intBadGuy}].ID}) /return
-	/target id ${intBadGuy}
-	/delay 1
+		/if (!${Spawn[id ${intBadGuy}].ID}) /return
+		/target id ${intBadGuy}
+		/delay 1
 	/if (${Target.ID} != ${intBadGuy}) /GOTO :targetwait
+	/if (${Target.Type.Equal[PC]}) {
+		/attack off
+		/stick 7 id ${intCommander} loose
+		/return
+	 }
 	/pet attack
 	/delay 3s
 	/pet attack
@@ -26,7 +31,7 @@ Sub Main(int intCommander, int intBadGuy)
 		|- Bad spells on target macro was run on
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
-				/call SpotHeal 50 100
+				/call SpotHeal 70 100
 				|     Life  %--^  ^---Range
 				/delay 3s ${Me.SpellReady[${BAD[${loop}]}]}
 				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
@@ -43,7 +48,10 @@ Sub Main(int intCommander, int intBadGuy)
 		/delay 1
 		/if (!${Me.TargetOfTarget.Name.Equal[${Me.Name}]} && !${Me.Sitting} && ${Me.PctMana} < 90 && !${Me.Casting.ID} && ${Spawn[id ${intBadGuy}].Distance} > ${Spawn[id ${intBadGuy}].MaxRange}) /sit
 	/if (${Spawn[id ${intBadGuy}].ID} && !${Spawn[id ${intBadGuy}].Dead}) /GOTO :TOP
+	:ENDING
 	/echo ENDING MACRO
+	/attack off
+	/stick 7 id ${intCommander} loose
 /return
 
 
