@@ -24,7 +24,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/face fast
 	/declare BAD[2] string outer NULL
 	/varset BAD[1] "Snare"
-	/varset BAD[2] "Flame Lick"
+	/varset BAD[2] "Ignite"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
@@ -59,7 +59,7 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 	/declare intLoop int local 0
 	/declare intPctHPs int local 100
 	/declare intTargetID int local 0
-	/declare strHealSpell string local "Minor Healing"
+	/declare strHealSpell string local "Light Healing"
 	| Check group health
 	/for intLoop 0 to ${Group}
 		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {
