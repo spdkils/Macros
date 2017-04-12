@@ -15,6 +15,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/if (${Target.ID} != ${intBadGuy}) /GOTO :targetwait
 	/if (${Target.Type.Equal[PC]}) {
 		/attack off
+		/call SpotHeal 70 100
 		/stick 7 id ${intCommander} loose
 		/return
 	 }
@@ -22,8 +23,9 @@ Sub Main(int intCommander, int intBadGuy)
 	/delay 3s
 	/pet attack
 	/face fast
+	/stick id ${intBadGuy} 100 healer
 	/declare BAD[2] string outer NULL
-	/varset BAD[1] "Snare"
+	/varset BAD[1] "Stinging Swarm"
 	/varset BAD[2] "Ignite"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
@@ -59,7 +61,7 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 	/declare intLoop int local 0
 	/declare intPctHPs int local 100
 	/declare intTargetID int local 0
-	/declare strHealSpell string local "Light Healing"
+	/declare strHealSpell string local "Healing"
 	| Check group health
 	/for intLoop 0 to ${Group}
 		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {

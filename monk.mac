@@ -20,7 +20,7 @@ Sub Main
 	/if (${Target.ID} != ${myTarget} && ${Spawn[id ${myTarget}].ID} && !${Spawn[id ${myTarget}].Dead}) /goto :WAITFORTARGET
 	/if (!${Target.ID}) /return
 	/face fast
-	/if (${Spawn[id ${myTarget}].LineOfSight}) /stick 9 id ${myTarget} loose
+	/if (${Spawn[id ${myTarget}].LineOfSight} && ${Spawn[id ${myTarget}].Distance} < 100) /stick 9 id ${myTarget} loose
 	/if (${Target.Type.Equal[PC]}) {
 		/attack off
 		/return
@@ -29,17 +29,19 @@ Sub Main
 	/declare caster bool local ${Target.Class.PureCaster}
 	/if (!${caster}) /varset caster ${Target.Class.PetClass}
 	:TOP
+		/target id ${myTarget}
 		/if (${Me.PctHPs} > 30) /varset aids true
 		/attack on
 		/doevents
 		/face fast id ${myTarget}
-		/if (${intTopHate} > 0) {
-			/bc ${strTopName} : ${intTopHate}
-			/varset intTopHate 0
-		}
 		/if (${Target.Type.Equal[NPC]}) {
 			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Tiger Claw]}) /doability "Tiger Claw"
-			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Round Kick]}) /doability "Round Kick"
+			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Eagle Strike]}) /doability "Eagle Strike"
+			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.PctHPs} < 20 && ${Me.AbilityReady[Feign Death]} ${Me.TargetOfTarget.Name.Equal[${Me.Name}]}) {
+				/doability "Feign Death"
+				/delay 1
+				/stand
+				} 
 		}
 		/if (${Me.PctHPs} < 31) {
 			/bc BAD NEWS!

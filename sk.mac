@@ -1,0 +1,86 @@
+#Turbo
+
+|- This script expects you to execute it passing 2 parameters 1: Who the boss is, 2: Who to attack.
+|- --------------------------------------------------------------${Param0}           ${Param1}
+|- Example /mac simple ${Me.ID} ${Target.ID}
+|- If you want to use this via eqbc then it could look like this. /bct Eemo //mac simple ${Me.ID} ${Target.ID}
+|- Eemo will get this as a command.  /mac simple 534 292 (Just example numbers, depends on target, and zone)
+
+#EVENT mobCast "#1# begins to cast a spell."
+
+
+Sub Main
+/echo Lame Assist
+/declare intMyHate int outer 0
+/declare intTopHate int outer 0
+/declare strTopName string outer NULL
+/declare aids bool outer true
+/declare myTarget int local ${Param1}
+/target id ${myTarget}
+:WAITFORTARGET
+/delay 1
+/if (${Target.ID} != ${myTarget} && ${Spawn[id ${myTarget}].ID} && !${Spawn[id ${myTarget}].Dead}) /goto :WAITFORTARGET
+/if (!${Target.ID}) /return
+/face fast
+/if (${Spawn[id ${myTarget}].LineOfSight}) /stick 9 id ${myTarget} loose
+/if (${Target.Type.Equal[PC]}) {
+	/attack off
+	/return
+ }
+/bc Attacking ${Target.Name}
+/declare caster bool local ${Target.Class.PureCaster}
+/if (!${caster}) /varset caster ${Target.Class.PetClass}
+:TOP
+	/if (${Me.Feigning}) {
+		/if (${Me.PctHPs} < 80) {
+			/delay 1s
+			/GOTO :TOP
+		}
+		/stand
+	}
+	/if (${Me.PctHPs} > 30) /varset aids true
+	/attack on
+	/doevents
+	/face fast id ${myTarget}
+	/if (${intTopHate} > 0) {
+		/bc ${strTopName} : ${intTopHate}
+		/varset intTopHate 0
+	}
+	/if (${Target.Type.Equal[NPC]}) {
+		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
+		/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
+		/if (${Me.Combat} && ${Me.SpellReady[Engulfing Darkness]} && ${SpellTimer[${myTarget},Engulfing Darkness]} < 10) {
+			/stick off
+			/delay 1
+			/cast "Engulfing Darkness" -targetid|${myTarget}
+			/delay 10s !${Me.Casting.ID}
+			/stick 9 id ${myTarget} loose
+		}
+		
+	}
+	/if (${Me.PctHPs} < 20) {
+		/bc BAD NEWS!
+		/if (${aids})	/vgroup 007
+		/varset aids false
+		/if (${Cast.Ready[Death Peace]}) {
+			:DIEALREADY
+			/casting "Death Peace" alt -targetid|${Me.ID}
+			/delay 4s !${Me.Casting.ID}
+			/if (!${Me.Feigning}) /GOTO :DIEALREADY
+		}
+		
+	}
+	/delay 1
+	/if (!${Spawn[id ${myTarget}].Dead} && ${Spawn[id ${myTarget}].ID}) /GOTO :TOP
+	/attack off
+	/stick 7 id ${Param0} loose
+/return
+| endsub
+
+Sub EVENT_mobCast(strFullmsg,strWho)
+	/if (${Target.CleanName.Equal[${strWho}]} && ${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) {
+		/doability "Bash"
+		/bc Shield to the FACE
+		/return
+	}
+/return
