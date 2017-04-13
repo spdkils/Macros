@@ -31,7 +31,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
-		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
+		/if (${Me.PctMana} > 20 && ${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
 				/call SpotHeal 70 100
 				|     Life  %--^  ^---Range
