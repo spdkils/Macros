@@ -2,8 +2,8 @@
 
 sub Main(string strSpell)
 /echo I should cast ${strSpell}
-	/declare loop int inner
-	/for loop 0 to ${Group}
+	/declare loop int local
+	/for loop ${Group} downto 0
 		/delay 10s ${Me.SpellReady[${strSpell}]}
 		/if (${Me.CurrentMana} > ${Spell[${strSpell}].Mana} && ${Me.SpellReady[${strSpell}]} && ${SpellTimer[${Group.Member[${loop}].ID},${strSpell}]}<20) /casting "${strSpell}" -targetid|${Group.Member[${loop}].ID}
 	/next loop

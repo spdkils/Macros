@@ -7,6 +7,8 @@
 
 
 Sub Main(int intCommander, int intBadGuy)
+	/call SpotHeal 70 99
+	/if (${Me.Sitting} && ${Me.PctMana} < 90 && ${Me.CombatState.Equal[resting]}) /return
 	/stick off
 	:targetwait
 		/if (!${Spawn[id ${intBadGuy}].ID}) /return
@@ -25,8 +27,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/face fast
 	/stick id ${intBadGuy} 100 healer
 	/declare BAD[2] string outer NULL
-	/varset BAD[1] "Stinging Swarm"
-	/varset BAD[2] "Ignite"
+	/varset BAD[1] "Combust"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
