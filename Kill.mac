@@ -56,6 +56,7 @@ Sub Main
 	/declare intKillCount int outer
 	/declare startZone int outer ${Zone.ID}
 	/declare snared bool outer FALSE
+	/declare strPuller string outer
 	/varset boolGrey TRUE
 	/varset boolPullFromCamp FALSE
 	/varset pullRadius ${Param0}
@@ -114,7 +115,7 @@ Sub Main
 	/delay 1s
   /next loop
   /call FindHealer
-
+  /call ChoosePuller
 
 :Top
 	/doevents chatInput
@@ -176,7 +177,7 @@ Sub Main
 Sub EVENT_BotLeave(fullMsg, botName)
 	/echo ${botName} left! WHY!
 	/say ^botspawn ${botName}
-	/delay 1s ${SpawnCount[pc ${botName}].Equal[${botName}]}
+	/delay 1s ${SpawnCount[pc ${botName}]}
 	/invite ${botName}
 /return
 
@@ -194,6 +195,16 @@ Sub FindHealer
 			}
 	/next loop
 	/if (${Debug}>0) /echo Healer is ${healerSlot}
+/return
+
+Sub ChoosePuller
+	/for loop 1 to ${Group}
+		/if (${Group.Member[${loop}].Class.PetClass}) {
+			/varset strPuller ${Group.Member[${loop}].Name}
+			/if (${Debug}>0) /echo Puller is ${strPuller}
+			/return
+			}
+	/next loop
 /return
 
 Sub EVENT_chatInput(fullMsg,varOne,varTwo)
@@ -349,13 +360,29 @@ Sub Wait
 
 Sub FindBestTarget(pullDistance, strType, bool LOS, string dir)
 	/declare mobCount int local
+	/declare heightDivider float local
+	/declare innerLoop int local
+	/declare heightSplit int local
+	/varcalc heightSplit (${pullHeight}/20)+1
 	/if (${LOS}) {
-		/varset mobCount ${SpawnCount[npc ${pullFrom} targetable los zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
-		/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable los zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+		/for innerLoop 1 to ${heightSplit}
+			/varcalc heightDivider ${heightSplit}*${innerLoop}
+			/if (${heightDivider}>${pullHeight}) /varset heightDivider ${pullHeight}
+			/varset mobCount ${SpawnCount[npc ${pullFrom} targetable los zradius ${heightDivider} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
+			/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable los zradius ${heightDivider} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+			/if (${Debug} > 1) /echo ${mobCount} fuckers on list to be killed.
+			/if (${mobCount}>0 && ${targetid}) /goto :SKIPLOS
+		/next innerLoop
 		/goto :SKIPLOS
 	}
-	/varset mobCount ${SpawnCount[npc ${pullFrom} targetable zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
-	/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable zradius ${pullHeight} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+	/for innerLoop 1 to ${heightSplit}
+		/varcalc heightDivider ${heightSplit}*${innerLoop}
+		/if (${heightDivider}>${pullHeight}) /varset heightDivider ${pullHeight}
+		/varset mobCount ${SpawnCount[npc ${pullFrom} targetable zradius ${heightDivider} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}]}
+		/varset targetid ${NearestSpawn[1,npc ${pullFrom} targetable zradius ${heightDivider} radius ${pullDistance} range ${minLevel} ${pullLevel} ${strType}].ID}
+		/if (${Debug} > 1) /echo ${mobCount} fuckers on list to be killed.
+		/if (${mobCount}>0 && ${targetid}) /goto :SKIPLOS
+	/next innerLoop
 	:SKIPLOS
 	/if (${Debug} > 0) /echo ${mobCount} fuckers on list to be killed.
 	/if (${mobCount} == 0) /return NO_TARGETS
@@ -378,6 +405,7 @@ Sub FindBestTarget(pullDistance, strType, bool LOS, string dir)
 /return NO_TARGETS
 
 Sub Pull
+	/declare innerLoop int local 0
 	/doevents chatInput
 	/attack off
 	/if (!${Target.ID}) /return PULL_FAILED
@@ -394,7 +422,8 @@ Sub Pull
 	/for loop 0 to 9
 		/if (${Debug} > 2) /echo Trying to aggro for ${loop} seconds...
 		/doevents chatInput
-		/say ^attack all
+		/if (${Spawn[pc ${strPuller}].ID}) /say ^attack byname ${strPuller}
+		/if (!${Spawn[pc ${strPuller}].ID}) /say ^attack all
 		/delay 1s
 		|------> If I'm out of combat, and Resting, he must have died, or something else strange like I didn't agro him.
 		/if (${Me.CombatState.Equal[Resting]}) /goto :GotAgro
@@ -406,29 +435,26 @@ Sub Pull
 	/return PULL_FAILED
 	:GotAgro
 	/if (${Debug} > 0) /echo Agro took ${loop} seconds...
-	:PullBack
-	/for loop 0 to 14
-		/doevents chatInput
-		|-- Removed the LOS check, 30 is pretty close. I should maybe think about having this range variable
-		/if (${Spawn[npc targetable zradius 10 radius 30 range 1 100].ID}) {
-			/squelch /target ${Spawn[npc targetable zradius 10 radius 30 range 1 100]}
-			/if (${Me.TargetOfTarget.CurrentHPs}) {
-				/if (${Debug}>1) /echo Changed Target
-				/say ^summon all
-				/return ATTACK
-			}
-			|-Target my previous target
-			/squelch /target ${Spawn[${targetid}]}
+ :PullBack
+	/doevents chatInput
+	/for innerLoop 1 to ${Me.XTarget}
+		/if (${Me.XTarget[${innerLoop}].Type.Equal[Auto Hater]} && ${Me.XTarget[${innerLoop}].ID} && ${Spawn[id ${Me.XTarget[${innerLoop}].ID}].Distance} < ${Spawn[id ${Me.XTarget[${innerLoop}].ID}].MaxRange}) {
+			/squelch /target id ${Me.XTarget[${innerLoop}].ID}
+			/return ATTACK
 		}
-		/say ^summon all
-		/delay 1s
-		|---> If he is stuck in a wall, or something else stupid, it gets stuck, so 10 seconds is enough time to wait for a gap close, fail out, target again.
-		/if (((${Spawn[${targetid}].Distance} < ${closeGapTo}) || (${Spawn[${targetid}].Distance} < ${Spawn[${targetid}].MaxRange})) && ${Target.LineOfSight} && ${Spawn[${targetid}].ID} != NULL) /return ATTACK
-		/if (${Spawn[${targetid}].ID} == NULL || ${Spawn[${targetid}].Dead}) /return PULL_FAILED
-	/next loop
+	/next innerLoop
+	/say ^summon all
+	/delay 1s
+	|---> If he is stuck in a wall, or something else stupid, it gets stuck, so 10 seconds is enough time to wait for a gap close, fail out, target again.
+	/if (((${Spawn[${targetid}].Distance} < ${closeGapTo}) && ${Target.LineOfSight} || (${Spawn[${targetid}].Distance} < ${Spawn[${targetid}].MaxRange})) && ${Target.LineOfSight} && ${Spawn[${targetid}].ID} != NULL) /return ATTACK
+	/if (${Spawn[${targetid}].ID} == NULL || ${Spawn[${targetid}].Dead}) /return PULL_FAILED
+ /GOTO :PullBack
 /return PULL_FAILED
 
 Sub Attack
+	/if (!${Target.ID} || ${Target.Type.NotEqual[NPC]}) /return
+	/declare cloasest float local 0.0
+	/declare innerLoop int local 1
 	/if (${Debug}>1) /echo Attack Called
 	/declare currentTarget string local
 	:TOP
@@ -441,6 +467,12 @@ Sub Attack
 	/if (${Me.Class.PureCaster} || ${Me.Class.Name.Equal[Shaman]}) /call Nuke
 	/if (${Me.Class.Name.Equal[Monk]} || ${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Beast Lord]} || ${Me.Class.Name.Equal[Paladin]}|| ${Me.Class.Name.Equal[Berserker]}) /call Melee
 	:DEFAULT
+	/for innerLoop 1 to ${Me.XTarget}
+		/if (${Me.XTarget[${innerLoop}].Type.Equal[Auto Hater]} && ${Me.XTarget[${innerLoop}].ID} && ${Spawn[id ${Me.XTarget[${innerLoop}].ID}].Distance} < ${Spawn[id ${Me.XTarget[${innerLoop}].ID}].MaxRange}) {
+			/squelch /target id ${Me.XTarget[${innerLoop}].ID}
+			/goto :TOP
+		}
+	/next innerLoop
 	/if (${Spawn[npc targetable zradius 10 radius 40 range 1 100].ID}) /squelch /target ${Spawn[npc targetable zradius 10 radius 40 range 1 100]}
 	/delay 3
 	/if (${Target.ID} && ${Target.Type.Equal[NPC]} && ${Me.TargetOfTarget.CurrentHPs}) /goto :TOP
@@ -449,7 +481,6 @@ Sub Attack
 
 Sub Exit
 	/echo You died, or zoned. Wahh waa wahhh
-	/afk
 	/endmacro
 /return
 
@@ -478,7 +509,7 @@ Sub Ranger
 	}
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Kick]} && ${Me.Ability[1].Equal[Kick]}) /doability "Kick"
 	/delay 1s
-	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :RANGERTOP
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :RANGERTOP
 /return
 
 Sub ShadowKnight
@@ -509,7 +540,7 @@ Sub ShadowKnight
 
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) /doability "Bash"
 	/delay 1s
-	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :SKTOP
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :SKTOP
 /return
 
 Sub SpotHeal(int intHealThreshold, int intSpellRange)
@@ -608,17 +639,20 @@ Sub Melee
 	/face fast
 	/squelch /stick 70% moveback
  :MELEETOP
+ 	/if (${Debug}>3) /echo Melee Loop
 	/doevents chatInput
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
 	/attack on
 	/say ^attack all
-	/if (${Target.Distance}<15 && ${Me.AbilityReady[Flying Kick]}) /doability "Flying Kick"
-	/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Frenzy]}) /doability "Frenzy"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Flying Kick]}) /doability "Flying Kick"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Tiger Claw]}) /doability "Tiger Claw"
+	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Slam]} && ${Me.Ability[1].Equal[Slam]}) /doability 1
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && ${Me.Ability[1].Equal[Bash]}) /doability "Bash"
 	/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Kick]} && ${Me.Ability[1].Equal[Kick]}) /doability "Kick"
 	/delay 1s
-	/if (${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :MELEETOP
+	/if (${Target.Type.Equal[NPC]} && ${Target.ID} == ${myTarget} && ${Target.ID} != NULL) /goto :MELEETOP
 /return
 
 

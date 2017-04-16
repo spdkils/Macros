@@ -43,7 +43,7 @@ Sub Main
 	/if (${Target.Type.Equal[NPC]}) {
 		/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Taunt]}) /doability "Taunt"
 		/if (${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]} && !${caster}) /doability "Bash"
-		|/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" -targetid|${myTarget}
+		/if (${Me.Combat} && ${Me.SpellReady[Flash of Light]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" -targetid|${myTarget}
 		/if (${Me.Combat} && ${Me.SpellReady[Desist]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) {
 			/if (${SpellTimer[${myTarget},Flash of Light]}) {
 				/keypress forward hold

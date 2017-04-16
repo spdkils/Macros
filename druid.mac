@@ -62,7 +62,7 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 	/declare intLoop int local 0
 	/declare intPctHPs int local 100
 	/declare intTargetID int local 0
-	/declare strHealSpell string local "Healing"
+	/declare strHealSpell string local "Greater Healing"
 	| Check group health
 	/for intLoop 0 to ${Group}
 		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {
