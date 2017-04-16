@@ -33,6 +33,7 @@ Sub Main(int intCommander, int intBadGuy)
 		/attack on
 		/doevents
 		/face fast id ${myTarget}
+		/if (${Me.Combat} && (${Me.TargetOfTarget.Name.Equal[Anastasia]} || ${Me.TargetOfTarget.Name.Equal[Lyft]})&& ${Me.SpellReady[Flash of Light]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" -targetid|${myTarget}
 		/if (${Target.Type.Equal[NPC]}) {
 			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Kick]}) /doability "Kick"
 		}

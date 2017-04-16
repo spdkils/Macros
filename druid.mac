@@ -27,7 +27,8 @@ Sub Main(int intCommander, int intBadGuy)
 	/face fast
 	/stick id ${intBadGuy} 100 healer
 	/declare BAD[2] string outer NULL
-	/varset BAD[1] "Combust"
+	/varset BAD[1] "Ensnare"
+	/varset BAD[2] "Drones of Doom"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
