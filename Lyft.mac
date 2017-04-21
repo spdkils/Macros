@@ -5,7 +5,6 @@
 |-----------------
 |- Requires MQ2Cast & MQ2CastTimer
 
-
 Sub Main(int intCommander, int intBadGuy)
 	/call SpotHeal 70 99
 	/if (${Me.Sitting} && ${Me.PctMana} < 90 && ${Me.CombatState.Equal[resting]}) /return
@@ -77,7 +76,10 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 		/if (${Me.SpellReady[${strHealSpell}]}) {
 			/gsay Casting ${strHealSpell} on ${Spawn[id ${intTargetID}].Name}
 			/casting ${strHealSpell} -targetid|${intTargetID}
-			/delay 12s !${Me.Casting.ID}
+			:CASTING
+			/delay 1
+			/if (${Spawn[id ${intTargetID}].PctHPs} > 90) /stopcast
+			/if (${Me.Casting.ID}) /GOTO :CASTING
 			/call SpotHeal 70 100
 		}
 	}

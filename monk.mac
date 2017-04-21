@@ -6,7 +6,6 @@
 |- If you want to use this via eqbc then it could look like this. /bct Eemo //mac simple ${Me.ID} ${Target.ID}
 |- Eemo will get this as a command.  /mac simple 534 292 (Just example numbers, depends on target, and zone)
 
-
 Sub Main
 	/echo Lame Assist
 	/declare intMyHate int outer 0

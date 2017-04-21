@@ -11,13 +11,15 @@ Sub Main(int intCommander, int intBadGuy)
 	/echo Beast Assist
 	/declare aids bool outer true
 	/declare myTarget int local ${intBadGuy}
+	/declare maxRange int local
+	/varcalc maxRange ${Me.MaxRange}-1
 	/target id ${myTarget}
 	:WAITFORTARGET
 		/delay 1
 	/if (${Target.ID} != ${myTarget} && ${Spawn[id ${myTarget}].ID} && !${Spawn[id ${myTarget}].Dead}) /goto :WAITFORTARGET
 	/if (!${Target.ID}) /return
 	/face fast
-	/if (${Spawn[id ${myTarget}].LineOfSight} && ${Spawn[id ${myTarget}].Distance} < 100) /stick 9 id ${myTarget} loose
+	/if (${Spawn[id ${myTarget}].LineOfSight} && ${Spawn[id ${myTarget}].Distance} < 100) /stick ${maxRange} id ${myTarget} loose
 	/if (${Target.Type.Equal[PC]}) {
 		/attack off
 		/return
@@ -33,7 +35,7 @@ Sub Main(int intCommander, int intBadGuy)
 		/attack on
 		/doevents
 		/face fast id ${myTarget}
-		/if (${Me.Combat} && (${Me.TargetOfTarget.Name.Equal[Anastasia]} || ${Me.TargetOfTarget.Name.Equal[Lyft]})&& ${Me.SpellReady[Flash of Light]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" -targetid|${myTarget}
+		/if (${Me.Combat} && (${Me.TargetOfTarget.Name.Equal[Anastasia]} || ${Me.TargetOfTarget.Name.Equal[Lyft]}) && ${Me.SpellReady[Flash of Light]} && ${SpellTimer[${myTarget},Flash of Light]} < 4) /casting "Flash of Light" -targetid|${myTarget}
 		/if (${Target.Type.Equal[NPC]}) {
 			/if (${Target.Distance}<15 && ${Me.CombatState.Equal[Combat]} && ${Me.AbilityReady[Kick]}) /doability "Kick"
 		}
