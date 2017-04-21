@@ -70,9 +70,9 @@ Sub Main
 			/delay 4 !${Me.Casting.ID}
 			/target id ${myTarget}
 		}
-		
+
 	}
-	
+
 	/if (${Spawn[id ${Param0}].PctHPs}<30 && ${Me.SpellReady[Healing]}) {
 		/stick off
 		/casting "Healing" -targetid|${Param0}

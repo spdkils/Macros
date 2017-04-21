@@ -86,12 +86,12 @@ Sub Main
 	|==========================================================================
 	|-------> Change this, if you want to limit what mobs you will target comapred to your height.
 	/varset pullHeight 25
-	
+
 	|===========================================================================
 	|------------> Change the + <NUMBER> if you want to set a pull level other than your current level.
 	/varset LevelBonus 0
 	/varcalc pullLevel ${Me.Level}+${LevelBonus}
-	
+
 	|----------> Just a friendly welcome message.
 	/echo ===== Welcome to the PULL script! =====
 	/echo = Won't pull mobs ${pullHeight} above or below you.
@@ -134,7 +134,7 @@ Sub Main
 		/squelch /makecamp return
 		/delay 4s
 	}
-	
+
 	/if (!${Me.CombatState.Equal[Combat]}) {
 		/doevents BotLeave
 		/call Shissar
@@ -159,7 +159,7 @@ Sub Main
 			/varcalc minLevel ${Spawn[${targetid}].Level}+1
 			/goto :Top
 		}
-	  
+
 	  }
 	  /if (${Macro.Return.Equal[NO_TARGETS]}) {
 		  /delay 2s
@@ -346,10 +346,10 @@ Sub EVENT_snare(fullMsg)
 Sub Wait
 	|-||||||||||||||||| If I'm in combat, no need to wait! Otherwise, heal up some!
 	/if (${Debug}>0) /echo Waiting
-	
+
 	:wait
 		/doevents chatInput
-		/if (${Debug}>4) /echo WaitLoop HP:${Me.PctHPs}% MANA:${Me.PctMana}%, Healer:${Group.Member[${healerSlot}].CurrentMana} 
+		/if (${Debug}>4) /echo WaitLoop HP:${Me.PctHPs}% MANA:${Me.PctMana}%, Healer:${Group.Member[${healerSlot}].CurrentMana}
 		/if (${Me.CombatState.Equal[Combat]}) /return
 		/if (((${Me.MaxMana}==0 || ${Me.PctMana} > 65) && ${Me.PctHPs}>90 && (${Group.Member[${healerSlot}].CurrentMana} > 30 || ${healerSlot} ==0)) || ${Target.ID} != NULL ) /return
 		/if (${Group.Member[${healerSlot}].CurrentMana} > 80 && ${healerSlot}) /return
@@ -627,7 +627,7 @@ Sub Shissar
 			/next ShissLoop
 		}
 	}
-	
+
  /if (${Me.SpellReady[Boon of the Clear Mind]} && !${Me.Buff[Boon of the Clear Mind].Name.Equal[Boon of the clear mind]}) /cast "Boon of the clear mind"
  /delay 3s
 /return

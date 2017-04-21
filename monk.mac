@@ -40,7 +40,7 @@ Sub Main
 				/doability "Feign Death"
 				/delay 1
 				/stand
-				} 
+				}
 		}
 		/if (${Me.PctHPs} < 31) {
 			/if (${aids}) {
@@ -50,7 +50,7 @@ Sub Main
 			/varset aids false
 			/if (${Me.AbilityReady[Mend]}) /doability "Mend"
 		}
-		
+
 		/delay 1
 		/if (!${Spawn[id ${myTarget}].Dead} && ${Spawn[id ${myTarget}].ID}) /GOTO :TOP
 	/attack off
