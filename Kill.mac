@@ -35,28 +35,28 @@ Sub Main
 	/hidecorpse looted
 
 	|-------> Variables used in my Line Of Sight function
-	/declare healerSlot int outer 0
-	/declare boolGrey bool outer
-	/declare pullHeight int outer
-	/declare pullLevel int outer
-	/declare loop int outer
-	/declare targetid int outer
-	/declare myLevel int outer
-	/declare closeGapTo int outer
-	/declare Debug int outer
-	/declare LevelBonus int outer
-	/declare minLevel int outer
-	/declare LOSPull bool outer
-	/declare pullDir string outer
-	/declare boolMove bool outer
-	/declare boolPullFromCamp bool outer
-	/declare pullFrom string outer
-	/declare strSpawn string outer
-	/declare pullRadius int outer
-	/declare intKillCount int outer
-	/declare startZone int outer ${Zone.ID}
-	/declare snared bool outer FALSE
-	/declare strPuller string outer
+	/declare healerSlot 		int 	outer 0
+	/declare boolGrey 			bool 	outer
+	/declare pullHeight 		int 	outer
+	/declare pullLevel 			int 	outer
+	/declare loop 				int 	outer
+	/declare targetid 			int 	outer
+	/declare myLevel 			int 	outer
+	/declare closeGapTo 		int 	outer
+	/declare Debug 				int 	outer
+	/declare LevelBonus 		int 	outer
+	/declare minLevel 			int 	outer
+	/declare LOSPull 			bool 	outer
+	/declare pullDir 			string 	outer
+	/declare boolMove 			bool 	outer
+	/declare boolPullFromCamp 	bool 	outer
+	/declare pullFrom 			string 	outer
+	/declare strSpawn 			string 	outer
+	/declare pullRadius 		int 	outer
+	/declare intKillCount 		int 	outer
+	/declare startZone 			int 	outer ${Zone.ID}
+	/declare snared 			bool 	outer FALSE
+	/declare strPuller 			string 	outer
 	/varset boolGrey TRUE
 	/varset boolPullFromCamp FALSE
 	/varset pullRadius ${Param0}
