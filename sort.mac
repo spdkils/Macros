@@ -68,7 +68,7 @@ Sub Main
 /echo Calling bubble.
 | ${InvSlot[Pack1].Item.Item[1].InvSlot}
 /return
-| endsub
+
 
 Sub Bubble
 	/declare short int local
@@ -79,12 +79,12 @@ Sub Bubble
 		/if (${InvSlot[${intBubbleList[${short}]}].Item.ID} > ${InvSlot[${intBubbleList[${Int[${Math.Calc[${loop}]}]}]}].Item.ID}) {
 			|/call Swap(${intBubbleList[${Int[${Math.Calc[${loop}-1]}]}]},${intBubbleList[${Int[${Math.Calc[${loop}]}]}]})
 			/varset boolSwap FALSE
-		}	
+		}
 	/next loop
 	/if (!${boolSwap}) /return
 	/GOTO :REPEAT
 /return
-| endsub
+
 
 Sub Swap(int intSlotOne, int intSlotTwo)
 	/echo Calling Swap ${intSlotOne} ${intSlotTwo}
@@ -96,10 +96,10 @@ Sub Swap(int intSlotOne, int intSlotTwo)
 	/shift /itemnotify ${intSlotOne} leftmouseup
 	/delay 1
 /return
-| endsub
+
 
 Sub TableSwap(int intSlotOne, int intSlotTwo)
 
 
 /return
-| endsub
+

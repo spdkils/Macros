@@ -11,7 +11,6 @@ Sub Main
 /goto :TOP
 
 /return
-| endsub
 
 Sub EVENT_PathAdded(strMsg,int intNode)
 	/target ${Spawn[npc los]}
@@ -20,14 +19,11 @@ Sub EVENT_PathAdded(strMsg,int intNode)
 	/delay 1
 	/varset intLastNode ${intNode}
 /return
-| endsub
 
 Sub EVENT_DropNode(strMsg)
 	/say #path add
 /return
-| endsub
 
 Sub JoinNodes(int NodeA, int NodeB)
 
 /return
-| endsub

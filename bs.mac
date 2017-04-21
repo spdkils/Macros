@@ -15,4 +15,3 @@ Sub EVENT_Backstab(fullMsg, guyName, intDamage)
 	/ECHO Backstab for ${intDamage}
 	/popup Backstab for ${intDamage}
 /return
-

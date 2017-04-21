@@ -56,7 +56,7 @@ Sub Main
 			/delay 10s !${Me.Casting.ID}
 			/stick 9 id ${myTarget} loose
 		}
-		
+
 	}
 	/if (${Me.PctHPs} < 20) {
 		/bc BAD NEWS!
@@ -68,14 +68,14 @@ Sub Main
 			/delay 4s !${Me.Casting.ID}
 			/if (!${Me.Feigning}) /GOTO :DIEALREADY
 		}
-		
+
 	}
 	/delay 1
 	/if (!${Spawn[id ${myTarget}].Dead} && ${Spawn[id ${myTarget}].ID}) /GOTO :TOP
 	/attack off
 	/stick 7 id ${Param0} loose
 /return
-| endsub
+
 
 Sub EVENT_mobCast(strFullmsg,strWho)
 	/if (${Target.CleanName.Equal[${strWho}]} && ${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) {

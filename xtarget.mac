@@ -20,4 +20,3 @@ Sub Main
 	/next loop
 	/if (${lastTarget}) /target ${Spawn[${lastTarget}]}
 /return
-| endsub

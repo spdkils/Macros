@@ -36,17 +36,17 @@ Sub Main
 
 	}
 /return
-| endsub
+
 
 Sub CanCast(string Spelll)
 	/if ($)
-	
+
 
 /return
-| endsub
+
 
 Sub Exit
 	/echo You died, or zoned. Wahh waa wahhh
 	/endmacro
 /return
-| endsub
+

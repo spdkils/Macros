@@ -17,7 +17,7 @@ Sub Main
 /goto :TOP
 
 /return
-| endsub
+
 
 Sub EVENT_expgain
 	/varcalc intLevelGain ${Me.Level}-${intLevel}

@@ -18,4 +18,3 @@ Sub Mez
 	| /say Nothing to mez
 
 /return
-| endsub
