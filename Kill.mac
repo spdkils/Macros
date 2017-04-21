@@ -108,20 +108,19 @@ Sub Main
 		/if (${Target.Class.Name.Equal[Magician]}) /say ^petsettype water
 		/delay 1
 	/next loop
-  /squelch /target clear
-  /for loop 1 to 10
-	/doevents chatInput
-	/delay 1s
-  /next loop
-  /call FindHealer
-  /call ChoosePuller
+	/squelch /target clear
+	/for loop 1 to 10
+		/doevents chatInput
+		/delay 1s
+	/next loop
+	/call FindHealer
+	/call ChoosePuller
 
-:Top
+  :Top
 	/doevents chatInput
 	/doevents expgain
 	/if (${Zone.ID} != ${startZone}) /call EXIT
 	/varcalc pullLevel ${Me.Level}+${LevelBonus}
-
 	|--------> Loot my mess.
 	/if (${Me.FreeInventory}) {
 		/attack off
@@ -140,12 +139,12 @@ Sub Main
 	}
 	|---------- Did I level up?
 	/if (${myLevel} < ${Me.Level} && !${Me.CombatState.Equal[Combat]}) {
-	  /say ^botupdate
-	  /varset myLevel ${Me.Level}
-	  /echo ===== CONGRATS! =====
-	  /echo -----  CHEATER  -----
-	  /echo ---------------------
-	  /echo = Won't pull mobs Level > ${pullLevel}
+		/say ^botupdate
+	  	/varset myLevel ${Me.Level}
+	  	/echo ===== CONGRATS! =====
+	  	/echo -----  CHEATER  -----
+	  	/echo ---------------------
+	  	/echo = Won't pull mobs Level > ${pullLevel}
 	}
 	|------- Start of pulling logic.
 	  /if (${Debug}) /echo Clearing Target
@@ -158,7 +157,6 @@ Sub Main
 			/varcalc minLevel ${Spawn[${targetid}].Level}+1
 			/goto :Top
 		}
-
 	  }
 	  /if (${Macro.Return.Equal[NO_TARGETS]}) {
 		  /delay 2s
@@ -168,7 +166,7 @@ Sub Main
 	|--------> Won't target stuff too high level now, change the level via command.
 	  /if (${Target.ID} != NULL) /call Pull
 	  /if (${Macro.Return.Equal[ATTACK]}) /call Attack
-	/goto :Top
+  /goto :Top
 /return
 
 
