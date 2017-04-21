@@ -4,27 +4,25 @@
 #include Ninjadvloot.inc
 #include expinclude.inc
 
-#EVENT chatInput "[MQ2] zrad #1#"
-#EVENT chatInput "[MQ2] debug #1#"
-#EVENT chatInput "[MQ2] help"
-#EVENT chatInput "[MQ2] los"
-#EVENT chatInput "[MQ2] minlevel #1#"
-#EVENT chatInput "[MQ2] maxlevel #1#"
-#EVENT chatInput "[MQ2] pause"
-#EVENT chatInput "[MQ2] dir #1#"
-#EVENT chatInput "[MQ2] move"
-#EVENT chatInput "[MQ2] camp"
-#EVENT chatInput "[MQ2] spawn #1#"
-#EVENT chatInput "[MQ2] range #1#"
-#EVENT chatInput "[MQ2] grey"
-#EVENT chatInput "You backstab #1# for #2# points of damage."
-#EVENT snare "#1# is engulfed by darkness."
-#EVENT snare "#1# is surrounded by darkness."
-#EVENT snare "#1# has been ensnared."
-#EVENT snare "Your spell did not take hold."
-
-
-#EVENT BotLeave "#1# has left the group."
+#EVENT chatInput	"[MQ2] zrad #1#"
+#EVENT chatInput	"[MQ2] debug #1#"
+#EVENT chatInput	"[MQ2] help"
+#EVENT chatInput	"[MQ2] los"
+#EVENT chatInput	"[MQ2] minlevel #1#"
+#EVENT chatInput	"[MQ2] maxlevel #1#"
+#EVENT chatInput	"[MQ2] pause"
+#EVENT chatInput	"[MQ2] dir #1#"
+#EVENT chatInput	"[MQ2] move"
+#EVENT chatInput	"[MQ2] camp"
+#EVENT chatInput	"[MQ2] spawn #1#"
+#EVENT chatInput	"[MQ2] range #1#"
+#EVENT chatInput	"[MQ2] grey"
+#EVENT chatInput	"You backstab #1# for #2# points of damage."
+#EVENT snare		"#1# is engulfed by darkness."
+#EVENT snare		"#1# is surrounded by darkness."
+#EVENT snare		"#1# has been ensnared."
+#EVENT snare		"Your spell did not take hold."
+#EVENT BotLeave		"#1# has left the group."
 
 Sub Main
 	|------> Expects me to insert radius, and name of mob to keep this generic.
@@ -57,16 +55,17 @@ Sub Main
 	/declare startZone 			int 	outer ${Zone.ID}
 	/declare snared 			bool 	outer FALSE
 	/declare strPuller 			string 	outer
-	/varset boolGrey TRUE
-	/varset boolPullFromCamp FALSE
-	/varset pullRadius ${Param0}
-	/varset Debug 0
-	/varset minLevel 1
-	/varset LOSPull FALSE
-	/varset pullDir R
-	/varset boolMove FALSE
+	/varset boolGrey 			TRUE
+	/varset boolPullFromCamp 	FALSE
+	/varset pullRadius 			${Param0}
+	/varset Debug 				0
+	/varset minLevel 			1
+	/varset LOSPull 			FALSE
+	/varset pullDir				R
+	/varset boolMove			FALSE
 	/varset pullFrom
-	/varset strSpawn ${Param1}
+	/varset strSpawn			${Param1}
+
 	/mapfilter spellradius ${pullRadius}
 	/mapfilter castradius 40
 
@@ -171,7 +170,7 @@ Sub Main
 	  /if (${Macro.Return.Equal[ATTACK]}) /call Attack
 	/goto :Top
 /return
-| endSub
+
 
 
 Sub EVENT_BotLeave(fullMsg, botName)
@@ -337,7 +336,7 @@ Sub FindBadGuy
 	/for loop 1 to ${SpawnCount[npc radius 40]
 
 /return
-| endsub
+
 
 Sub EVENT_snare(fullMsg)
 	/varset snared TRUE

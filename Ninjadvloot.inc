@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v5.2 Beta 06/07/2015 Redguides.com 
+| Ninjadvloot.inc v5.2 Beta 06/07/2015 Redguides.com
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
@@ -43,8 +43,8 @@
 #Event EditIniItem      "[MQ2] LootIniItem #1# #2#"
 #Event SellStuff        "[MQ2] NinjadvLoot selling items to vendor"
 #Event TradeStuff       "[MQ2] NinjadvLoot trading items to player"
-#Event Broke            "#*#you cannot afford#*#" 
-#Event Broke            "#*#you can't afford#*#" 
+#Event Broke            "#*#you cannot afford#*#"
+#Event Broke            "#*#you can't afford#*#"
 #Event Forage           "Your forage mastery has enabled you to find something else!"
 #Event Forage           "You have scrounged up #*#"
 #Event InventoryFull    "#*#Your inventory appears full!#*#"
@@ -53,16 +53,16 @@
 
 Sub SetupAdvLootVars(string ChangeIniFile)
 
-    /declare CantLootID                         int                 outer 
+    /declare CantLootID                         int                 outer
     /declare NinjadVersion                      string              outer   5.2
     /declare InventoryFull                      int                 outer   0
     /declare NinjaIniFile                       string              outer   Loot.ini
-    /declare MasterCorpseList                   string              outer   
+    /declare MasterCorpseList                   string              outer
     /declare Debugloot                          int                 outer   0
 	/declare MaxTradeSlotsCount                 int                 outer   0
     /declare GlobalCount                        int                 outer   5
-    /declare GlobalList[${GlobalCount}]         string              outer  
-    /varset GlobalList[1]                       string              outer  empty   
+    /declare GlobalList[${GlobalCount}]         string              outer
+    /varset GlobalList[1]                       string              outer  empty
     /declare AutoHater                          int                 outer
     /if (${ChangeIniFile.Length}) {
         /varset NinjaIniFile ${ChangeIniFile}
@@ -100,7 +100,7 @@ Sub SetupAdvLootVars(string ChangeIniFile)
     /call FindAutoHate
     /echo NINJADVLOOT: Variables are set.
 /return
-| endsub
+
 
 Sub NALLoadVar(IniSection,IniVar,IniValue,VarType)
     /if (!${Defined[${IniVar}]} && ${Defined[VarType]}) /declare ${IniVar} ${VarType} outer
@@ -109,9 +109,9 @@ Sub NALLoadVar(IniSection,IniVar,IniValue,VarType)
     /if (${IniString.Equal["NOTFOUND"]}) {
         /if (${IniString.Equal["NOTFOUND"]}) /varset ${IniVar} ${IniValue}
         /ini "${NinjaIniFile}" "${IniSection}" "${IniVar}" "${${IniVar}}"
-    } 
+    }
 /return
-| endsub
+
 
 Sub FindAutoHate
     /declare i int local
@@ -124,7 +124,7 @@ Sub FindAutoHate
         }
     /next i
 /return
-| endsub
+
 
 | ****************  Loot Mobs Section ******************** |
 
@@ -134,7 +134,7 @@ Sub LootMobs
     /if (${Debugloot}) /echo DEBUGLOOT !${LootMobs} || ${SpawnCount[npc los radius ${MobsTooClose} zradius 40]} || !${DeadCount} || ${Me.Combat} || ${Me.FreeInventory}<3 || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting})
     /if (!${LootMobs} || ${SpawnCount[npc los radius ${MobsTooClose} zradius 10 range 1 199]} || !${DeadCount} || ${Me.Combat} || !${Me.FreeInventory} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting}) /return
     /declare i int local
-    /declare CorpseList string local 
+    /declare CorpseList string local
     /declare CorpseToLoot int local
     /declare ZDist float local ${Math.Distance[${Target.Z}:${Me.Z}]}
     /declare ClosestCorpse int local
@@ -148,7 +148,7 @@ Sub LootMobs
         }
     /next i
     /if (${Debugloot}) /echo DEBUGLOOT Trying to loot ${CorpseCount} corpses. ID's ${CorpseList}
-    /for i 1 to ${CorpseCount} 
+    /for i 1 to ${CorpseCount}
         /varset CorpseToLoot ${CorpseList.Arg[${i},|]}
         /if (!${Defined[CorpseLocked${CorpseToLoot}]}) /declare CorpseLocked${CorpseToLoot} timer outer 0
             /if (${Spawn[${CorpseToLoot}].Deity.ID} || !${Spawn[${CorpseToLoot}].ID} || !${Spawn[${CorpseToLoot}].LineOfSight} || ${CorpseLocked${CorpseToLoot}} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting}) /goto :SkipCorpse
@@ -158,7 +158,7 @@ Sub LootMobs
                 /if (${Target.Distance}>5) {
                     /if (${Debugloot}) /echo DEBUGLOOT move to corpse
                     /moveto mdist 10
-                    /moveto loc ${Target.Y} ${Target.X} ${Target.Z} 
+                    /moveto loc ${Target.Y} ${Target.X} ${Target.Z}
                         /if (${Me.Mount.ID}) {
                             /delay 3s ${Math.Distance[${Target.Y},${Target.X}]}<25
                             /keypress back
@@ -174,9 +174,9 @@ Sub LootMobs
                 }
             :SkipCorpse
     /next i
-    /if (${Debugloot}) /echo DEBUGLOOT Leave Subs LootMobs 
+    /if (${Debugloot}) /echo DEBUGLOOT Leave Subs LootMobs
 /return
-| endsub
+
 
 
 Sub LootCorpse(CorpseID)
@@ -215,7 +215,7 @@ Sub LootCorpse(CorpseID)
                 /varset LootList ${LootList}${Corpse.Item[${i}]},
                 /goto :LootedInGlobal
             }
-            /if (${Debugloot}) /echo DEBUGLOOT Looting ${Corpse.Item[${i}].Name} ${i} of ${loottotal} 
+            /if (${Debugloot}) /echo DEBUGLOOT Looting ${Corpse.Item[${i}].Name} ${i} of ${loottotal}
             | Global loot section
             /if (${GlobalLootOn}) {
                 /for j 1 to ${GlobalCount}
@@ -241,7 +241,7 @@ Sub LootCorpse(CorpseID)
             /if (${Corpse.Item[${i}].ID} && !${Select[${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"]},Ignore,Keep,Destroy,Sell]}) {
                 /if (${Corpse.Item[${i}].NoDrop})  /ini "${NinjaIniFile}" "${FirstLetter}" "${Corpse.Item[${i}]}" Ignore
                 /if (!${Corpse.Item[${i}].NoDrop}) /ini "${NinjaIniFile}" "${FirstLetter}" "${Corpse.Item[${i}]}" Keep
-            }  
+            }
             /if (${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"].NotEqual[Destroy]} && ${Me.FreeInventory}<3 && (!${FindItemCount[=${Corpse.Item[${i}].Name}]} || (${FindItemCount[=${Corpse.Item[${i}].Name}]} && ${Corpse.Item[${i}].Stackable} && !${Corpse.Item[${i}].FreeStack})) || (${Corpse.Item[${i}].Lore} && ${FindItem[=${Corpse.Item[${i}]}].ID}) || ${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"].Equal[Ignore]}) /varset LootList ${LootList}${Corpse.Item[${i}]},
             /if ((${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"].Equal[Keep]} || ${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"].Equal[Sell]}) && (!${Corpse.Item[${i}].Lore} || !${FindItem[=${Corpse.Item[${i}]}].ID}) && (${Me.FreeInventory}>2 || (${FindItemCount[=${Corpse.Item[${i}].Name}]} && ${Corpse.Item[${i}].Stackable} && ${Corpse.Item[${i}].FreeStack}))) /call LootItem ${i} Keep Right
             /if (${Ini[${NinjaIniFile},"${FirstLetter}","${Corpse.Item[${i}]}"].Equal[Destroy]}) /call LootItem ${i} Destroy left
@@ -253,7 +253,7 @@ Sub LootCorpse(CorpseID)
                 /delay 3
                 /call Type "${LootChannel}"
                 /keypress Space chat
-                /notify LootWND LW_BroadcastButton leftmouseup 
+                /notify LootWND LW_BroadcastButton leftmouseup
                 /delay 3
                 /call Type " ,left on corpse."
                 /keypress Enter chat
@@ -263,14 +263,14 @@ Sub LootCorpse(CorpseID)
     }
     :clickdoneffs
         /nomodkey /notify LootWnd LW_DoneButton leftmouseup
-        /if (${Debugloot}) /echo DEBUGLOOT :clickdoneffs 
+        /if (${Debugloot}) /echo DEBUGLOOT :clickdoneffs
         /delay 5s !${Window[LootWnd].Open}
         /if (${Debugloot}) /echo DEBUGLOOT :clickdoneffs LootWin Open:${Window[LootWnd]}
     /if (${Window[LootWnd].Open}) /goto :clickdoneffs
     /call RemoveCorpseID ${CorpseID}
     /if (${Debugloot}) /echo DEBUGLOOT Leave Subs LootCorpse
 /return
-| endSub
+
 
 
 Sub Event_CantLoot
@@ -279,7 +279,7 @@ Sub Event_CantLoot
    /if (${Debugloot}) /echo DEBUGLOOT  Event_CantLoot Can't loot ${Target.CleanName} ${Target.ID}
    /if (${Debugloot}) /echo DEBUGLOOT Leave Subs Event_CantLoot
 /return
-| endsub
+
 
 Sub RemoveCorpseID(CListID)
     /if (${Defined[CorpseLocked${CListID}]}) {
@@ -289,7 +289,7 @@ Sub RemoveCorpseID(CListID)
         }
     }
 /return
-| endsub
+
 
 Sub LootItem(int i,DoWhat,WhichButton)
     /if (${Debugloot}) /echo DEBUGLOOT Enter Subs LootItem ${i} ${DoWhat} ${WhichButton}
@@ -303,7 +303,7 @@ Sub LootItem(int i,DoWhat,WhichButton)
     /if (${Cursor.ID}) /call CheckCursor
     /if (${Debugloot}) /echo DEBUGLOOT Leave Subs LootItem
 /return
-| endsub
+
 
 Sub CheckCursor
     /if (${Debugloot}) /echo DEBUGLOOT Enter Subs CheckCursor
@@ -316,7 +316,7 @@ Sub CheckCursor
     }
     /if (${Debugloot}) /echo DEBUGLOOT Leave Subs CheckCursor
 /return
-| endsub
+
 
 | **************** Foraged Items Section ******************** |
 Sub Event_Forage
@@ -327,7 +327,7 @@ Sub Event_Forage
             /varset ForagedItem ${Cursor.Name}
             /if (!${Select[${Ini[${NinjaIniFile},"${Cursor.Name.Left[1]}","${Cursor.Name}"]},Ignore,Keep,Destroy,Sell]}) {
                 /if (${Cursor.ID}) /ini "${NinjaIniFile}" "${Cursor.Name.Left[1]}" "${Cursor.Name}" Keep
-                /if (${LootForageSpam}) /echo New foraged item >> ${Cursor.Name} << added to ini file. 
+                /if (${LootForageSpam}) /echo New foraged item >> ${Cursor.Name} << added to ini file.
             }
             /if (${Ini[${NinjaIniFile},"${Cursor.Name.Left[1]}","${Cursor.Name}"].Equal[Destroy]} || ${Ini[${NinjaIniFile},"${Cursor.Name.Left[1]}","${Cursor.Name}"].Equal[Ignore]}) {
                 /if (${Cursor.Name.Equal[${ForagedItem}]})     /destroy
@@ -341,7 +341,7 @@ Sub Event_Forage
         }
     /if (${Cursor.ID}) /goto :MoreToAutoInventory
 /return
-| endsub
+
 
 | **************** Search Loot Section ******************** |
 Sub DoLootStuff(LootAction)
@@ -369,7 +369,7 @@ Sub DoLootStuff(LootAction)
                 }
             }
         }
-    /next k      
+    /next k
     | Loop through top level inventory slots for containers
     /for i 1 to 10
         | Check if top level inv slot has a bag
@@ -401,8 +401,8 @@ Sub DoLootStuff(LootAction)
         /keypress esc
     }
 /return
-| endsub
-   
+
+
 Sub NPC(string NPCName)
     /if ((${NPCName.Equal[null]}) && (${Target.Type.Equal[npc]} || ${Target.Type.Equal[pc]})) /varset NPCName ${Target.CleanName}
     /target pc|npc ${NPCName}
@@ -428,7 +428,7 @@ Sub NPC(string NPCName)
         /delay 5s
 	}
 /return
-| endsub
+
 
 | **************** Sell Loot Section ******************** |
 Sub Event_Sell(string soldstr, string ItemName)
@@ -437,7 +437,7 @@ Sub Event_Sell(string soldstr, string ItemName)
         /ini "${NinjaIniFile}" "${ItemName.Left[1]}" "${ItemName}" Sell
     }
 /return
-| endsub
+
 
 Sub SellToVendor(ItemToSell)
     /if (${Window[MerchantWnd].Open}) {
@@ -454,7 +454,7 @@ Sub SellToVendor(ItemToSell)
     /if (${FindItemCount[=${ItemToSell}]}) /goto :sell
     }
 /return
-| endsub
+
 
 | **************** Trade Loot Section ******************** |
 Sub TradeToTarget(ItemToSell)
@@ -475,9 +475,9 @@ Sub TradeToTarget(ItemToSell)
 	/nomodkey /shiftkey /notify TradeWnd TRDW_Trade_Button leftmouseup
 	/delay 1s
 /return
-| endsub
 
-| **************** Deposit Loot Section ******************** 
+
+| **************** Deposit Loot Section ********************
 Sub DepositToGuildBank(ItemToDeposit)
     /if (${Window[GuildBankWnd].Open}) {
         :deposit
@@ -498,9 +498,9 @@ Sub DepositToGuildBank(ItemToDeposit)
         /if (${FindItem[=${ItemToDeposit}].InvSlot}) /goto :deposit
     }
 /return
-| endsub
 
-| **************** Item set ini file event ******************** 
+
+| **************** Item set ini file event ********************
     Sub Event_EditIniItem(ItemString,ItemAction,ItemName)
         /if (${Cursor.ID}) {
             /echo -- Setting ${ItemName} to ${ItemAction}
@@ -509,51 +509,51 @@ Sub DepositToGuildBank(ItemToDeposit)
             /echo No item on cursor.
         }
     /return
-	| endsub
 
-| **************** Sell Stuff Event ******************** 
+
+| **************** Sell Stuff Event ********************
     Sub Event_SellStuff
         /call DoLootStuff sell
     /return
-	| endsub
 
-| **************** Trade Stuff Event ******************** 
+
+| **************** Trade Stuff Event ********************
     Sub Event_TradeStuff
         /call DoLootStuff trade
     /return
-	| endsub
+
 
 | **************** Deposit Stuff Event *******************
     Sub Event_DepositStuff
         /call DoLootStuff deposit
     /return
-	| endsub
 
-| **************** Broke Event ******************** 
-Sub Event_Broke 
+
+| **************** Broke Event ********************
+Sub Event_Broke
     /if (!${Window[MerchantWnd].Open}) /return
-    /echo You are out of money! 
-    /endmacro 
+    /echo You are out of money!
+    /endmacro
 /return
-| endsub
 
-| **************** Type Stuff  ******************** 
-| Lifted from commonsubs.inc by Armysoldier    
-Sub Type(InStr) 
-    /declare char string local 
-    /declare loopctr int local 
-    /for loopctr 1 to ${InStr.Length} 
-        /varset char ${InStr.Mid[${loopctr},1]} 
-        /if (!${char.Length}) { 
-            /nomodkey /keypress space chat 
-        } else { 
-            /nomodkey /keypress ${char} chat 
-        } 
-    /next loopctr 
-/return 
-| endsub
 
-| **************** Buy Stuff ********************  
+| **************** Type Stuff  ********************
+| Lifted from commonsubs.inc by Armysoldier
+Sub Type(InStr)
+    /declare char string local
+    /declare loopctr int local
+    /for loopctr 1 to ${InStr.Length}
+        /varset char ${InStr.Mid[${loopctr},1]}
+        /if (!${char.Length}) {
+            /nomodkey /keypress space chat
+        } else {
+            /nomodkey /keypress ${char} chat
+        }
+    /next loopctr
+/return
+
+
+| **************** Buy Stuff ********************
 Sub Buy(string ItemToBuy, int amount)
     /if (!${Select[${Target.Type},npc,pet]} || !${Target.ID} || ${Target.Type.Equal[pet]} && !${Target.CleanName.Find[familiar]}) /return
     /declare i int local
@@ -565,16 +565,16 @@ Sub Buy(string ItemToBuy, int amount)
     /if (${FindItemCount[${ItemToBuy}]}>=${amount}) {
         /echo I already have ${FindItemCount[${ItemToBuy}]} ${ItemToBuy}.
         /return
-    }   
+    }
     /varset ListItem ${Window[MerchantWnd].Child[ItemList].List[=${ItemToBuy},2]}
     /if (!${ListItem}) {
         /echo couldn't find ${ItemToBuy}
         /return
     } else {
         /notify MerchantWnd ItemList listselect ${ListItem}
-        /delay 5       
+        /delay 5
     } i
-    /echo Buying ${ItemToBuy} Till I get ${amount} 
+    /echo Buying ${ItemToBuy} Till I get ${amount}
     :Loop
     /doevents
     /if (${InventoryFull}) /return
@@ -583,7 +583,7 @@ Sub Buy(string ItemToBuy, int amount)
             /Shiftkey /notify merchantwnd MW_Buy_Button leftmouseup
             /delay 5 ${FindItemCount[B${ItemToBuy}]}>=${QTY}
             /echo ${FindItemCount[${ItemToBuy}]}/${amount} ${ItemToBuy} in inventory
-            /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]} 
+            /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]}
             /if (${QTY}<=0) {
                 /if (${Window[MerchantWnd].Open}) {
                     /echo Closing merchant window
@@ -595,7 +595,7 @@ Sub Buy(string ItemToBuy, int amount)
             /if (${QTY}>19) /goto :Loop
         }
         /if (${QTY}>0 && ${QTY}<20) {
-            /for i 1 to ${QTY} 
+            /for i 1 to ${QTY}
                 /Ctrlkey /notify merchantwnd MW_Buy_Button leftmouseup
                 /delay 1s ${FindItemCount[${ItemToBuy}]}>=${Math.Calc[${FindItemCount[${ItemToBuy}]}+${i}]}
                 /echo Buying ${ItemToBuy} ${i} of ${QTY}
@@ -609,12 +609,12 @@ Sub Buy(string ItemToBuy, int amount)
                 }
             /next i
             /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]}
-            
+
         }
     }
 /return
-| endsub
-    
+
+
 Sub ZCheck(float Zcur, float Zdiff)
     | Move down if Z distance more than Zcheck due to levitation
     /if (${Zcur}>=${Zdiff}) {
@@ -623,21 +623,21 @@ Sub ZCheck(float Zcur, float Zdiff)
         /keypress end
     }
 /return
-| endsub
+
 
 Sub Event_InventoryFull
     /echo Your Inventory is full. Turning off looting functions.
     /varset LootMobs FALSE
     /varset InventoryFull 1
 /return
-| endsub
+
 
 Sub CreateIni
     /if (${Ini[${NinjaIniFile}].Length}) /return
     /declare a local Settings|Global|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
     /echo Creating ini file ${NinjaIniFile}
-    /declare i int local 
-    /declare j int local 
+    /declare i int local
+    /declare j int local
     /for i 1 to 27
         /ini ${NinjaIniFile} "${a.Arg[${i},|]}" "|===================================" "==================================|"
         /if (${i}==2) {
@@ -647,14 +647,14 @@ Sub CreateIni
         }
     /next i
 /return
-| endsub
+
 
 Sub Event_NullSlot
         /echo NINJADVLOOT: Opening all bags to correct null slot
         /keypress OPEN_INV_BAGS
     /timed 30 /keypress CLOSE_INV_BAGS
 /return
-| endsub
+
 
 Sub UseAdvLoot
     /if (${Me.FreeInventory}<3) /return
@@ -675,7 +675,7 @@ Sub UseAdvLoot
         /if (${AdvLoot.SList[1].ID} && !${Group.MasterLooter.ID}) /echo NINJADVLOOT: Please Assign a player the Master Looter Role in the group window.
         /if (${Group.MasterLooter.ID}==${Me.ID}) {
             /varset ITSCount ${AdvLoot.SCount}
-            /for i ${ITSCount} downto 1 
+            /for i ${ITSCount} downto 1
                 /varset ITPName ${AdvLoot.SList[${i}].Name}
                 /if (${AdvLoot.SList[${i}].ID} && !${Select[${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"]},Ignore,Keep,Destroy,Sell]}) {
                       | Add item to ini if it not in there
@@ -686,9 +686,9 @@ Sub UseAdvLoot
                         /ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
                         /echo NINJADVLOOT: Adding ${ITPName}=Keep to ini file.
                     }
-                }  
+                }
                 /if (${Select[${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"]},Ignore]}) {
-                    /if (${Debugloot}) /echo SharedList: ${ITPName} is set to Ignore. Leaving item. 
+                    /if (${Debugloot}) /echo SharedList: ${ITPName} is set to Ignore. Leaving item.
                     /advloot shared ${i} leave
                     /delay 5
                     /goto :NextItem
@@ -727,7 +727,7 @@ Sub UseAdvLoot
                         /ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
                         /echo NINJADVLOOT: Adding ${ITPName}=Keep to ini file.
                     }
-                } 
+                }
                 | skip item if its lore and i have one
                 /if (${FindItem[${ITPName}].Lore}) {
                     /if (${Debugloot}) /echo PList: ${ITPName} is Lore and I have one. Skipping item.
@@ -751,15 +751,15 @@ Sub UseAdvLoot
                     /if (${Select[${IniEntry},Destroy]}) {
                         /call HandleItem "${ITPName}" Destroy
                     }
-         
+
                 }
                 :NextPItem
-            /next k 
+            /next k
         }
     }
      /if (${Debugloot})  /echo Leave UseAdvLoot
 /return
-| endsub
+
 
 Sub HandleItem(ItemName, DoWhat)
     /if (${Debugloot}) /echo DEBUGLOOT Enter Sub HandleItem ${ItemName} ${DoWhat}
@@ -770,9 +770,9 @@ Sub HandleItem(ItemName, DoWhat)
             /delay 1s ${Cursor.ID}
         /if (!${Cursor.ID} && ${HandleTimer}) /goto :GetItem
         /if (${Cursor.ID}==${FindItem[=${ItemName}].ID}) {
-            /echo NINJADVLOOT: Destroying ${Cursor.Name}   
-            /destroy 
-            /delay 5 
+            /echo NINJADVLOOT: Destroying ${Cursor.Name}
+            /destroy
+            /delay 5
             /if (${Window[ConfirmationDialogBox].Open}) {
                 /delay 10
                 /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
@@ -782,13 +782,13 @@ Sub HandleItem(ItemName, DoWhat)
     }
     /if (${Debugloot}) /echo DEBUGLOOT Leave Sub HandleItem
 /return
-| endsub
+
 
 Sub CheckGlobalList(GItemName,int GListNum, LootSystem)
 /declare i int local
 /declare j int local
 /declare GItem string local
-    | Create global list from ini file 
+    | Create global list from ini file
     /if (${GlobalLootOn} && ${GlobalList[1].Equal[empty]}) {
         /for i 1 to ${${GlobalCount}}
             /varset GItem ${Ini[${NinjaIniFile},"Global","Global${i}"]}
@@ -806,7 +806,7 @@ Sub CheckGlobalList(GItemName,int GListNum, LootSystem)
                     /advloot shared ${GListNum} giveto ${Me.Name}
                     /delay 10
                 }
-            }    
+            }
             /if (${LootSystem.Equal[PList}}) {
                 /if (${GlobalList[${i}].Arg[2,|].Equal[Ignore]}) /advloot shared ${GListNum} leave
                 /if (${Select[${GlobalList[${i}].Arg[2,|]},sell,keep,destroy]} ) {
@@ -820,7 +820,7 @@ Sub CheckGlobalList(GItemName,int GListNum, LootSystem)
                         /call HandleItem "${GItemName}" Destroy
                     }
                 }
-            }           
+            }
         }
     /next j
 /return

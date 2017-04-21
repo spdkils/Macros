@@ -12,4 +12,4 @@ Sub Main
   	/delay 1s
   /GOTO :MED
 /return
-| endsub
+

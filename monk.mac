@@ -8,11 +8,11 @@
 
 Sub Main
 	/echo Lame Assist
-	/declare intMyHate int outer 0
-	/declare intTopHate int outer 0
-	/declare strTopName string outer NULL
-	/declare aids bool outer true
-	/declare myTarget int local ${Param1}
+	/declare intMyHate 		int outer 0
+	/declare intTopHate 	int outer 0
+	/declare strTopName 	string outer NULL
+	/declare aids 			bool outer true
+	/declare myTarget 		int local ${Param1}
 	/target id ${myTarget}
 	:WAITFORTARGET
 		/delay 1

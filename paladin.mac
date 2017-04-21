@@ -85,7 +85,7 @@ Sub Main
 	/attack off
 	/stick 7 id ${Param0} loose
 /return
-| endsub
+
 
 Sub EVENT_mobCast(strFullmsg,strWho)
 	/if (${Target.CleanName.Equal[${strWho}]} && ${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) {

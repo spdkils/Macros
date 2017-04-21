@@ -6,4 +6,4 @@ Sub Main
 	/delay 5
 /next loop
 /return
-| endsub
+

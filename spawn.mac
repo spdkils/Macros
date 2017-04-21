@@ -8,7 +8,7 @@ Sub Main
 	/delay 5
 	/doevents
 /return
-| endsub
+
 
 Sub EVENT_botSpawn(strFull, strName, strJunk, strClass)
 	/if (${Group} < 5) {
@@ -19,4 +19,3 @@ Sub EVENT_botSpawn(strFull, strName, strJunk, strClass)
 		/delay 1s (${Group} > ${intMembers})
 	}
 /return
-| endsub

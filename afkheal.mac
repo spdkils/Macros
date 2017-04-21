@@ -1,12 +1,12 @@
 #turbo
 
 Sub Main
-/declare loop int outer
-/declare lowest int outer 100
-/declare member int outer -1
-/declare healAmount int outer 0
-/declare currentZone int outer ${Zone.ID}
-/declare PCs int outer 0
+/declare loop 			int outer
+/declare lowest 		int outer 100
+/declare member 		int outer -1
+/declare healAmount 	int outer 0
+/declare currentZone 	int outer ${Zone.ID}
+/declare PCs 			int outer 0
 
 
 /if (${Param0.Equal[TRUE]}) {
@@ -36,17 +36,17 @@ Sub Main
 
 	}
 /return
-| endsub
+
 
 Sub CanCast(string Spelll)
 	/if ($)
-	
+
 
 /return
-| endsub
+
 
 Sub Exit
 	/echo You died, or zoned. Wahh waa wahhh
 	/endmacro
 /return
-| endsub
+

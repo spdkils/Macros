@@ -11,10 +11,10 @@ Sub Main
 	/delay 1s
 	/goto :TOP
 /return
-| endsub
+
 
 Sub EVENT_botSpread(strFull,strName,int intLevel)
 	/say ^botspawn ${strName}
 	/delay 1s
 /return
-| endsub
+
