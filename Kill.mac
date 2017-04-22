@@ -4,25 +4,25 @@
 #include Ninjadvloot.inc
 #include expinclude.inc
 
-#EVENT chatInput	"[MQ2] zrad #1#"
-#EVENT chatInput	"[MQ2] debug #1#"
-#EVENT chatInput	"[MQ2] help"
-#EVENT chatInput	"[MQ2] los"
-#EVENT chatInput	"[MQ2] minlevel #1#"
-#EVENT chatInput	"[MQ2] maxlevel #1#"
-#EVENT chatInput	"[MQ2] pause"
-#EVENT chatInput	"[MQ2] dir #1#"
-#EVENT chatInput	"[MQ2] move"
-#EVENT chatInput	"[MQ2] camp"
-#EVENT chatInput	"[MQ2] spawn #1#"
-#EVENT chatInput	"[MQ2] range #1#"
-#EVENT chatInput	"[MQ2] grey"
-#EVENT chatInput	"You backstab #1# for #2# points of damage."
-#EVENT snare		"#1# is engulfed by darkness."
-#EVENT snare		"#1# is surrounded by darkness."
-#EVENT snare		"#1# has been ensnared."
-#EVENT snare		"Your spell did not take hold."
-#EVENT BotLeave		"#1# has left the group."
+#EVENT chatInput   "[MQ2] zrad #1#"
+#EVENT chatInput   "[MQ2] debug #1#"
+#EVENT chatInput   "[MQ2] help"
+#EVENT chatInput   "[MQ2] los"
+#EVENT chatInput   "[MQ2] minlevel #1#"
+#EVENT chatInput   "[MQ2] maxlevel #1#"
+#EVENT chatInput   "[MQ2] pause"
+#EVENT chatInput   "[MQ2] dir #1#"
+#EVENT chatInput   "[MQ2] move"
+#EVENT chatInput   "[MQ2] camp"
+#EVENT chatInput   "[MQ2] spawn #1#"
+#EVENT chatInput   "[MQ2] range #1#"
+#EVENT chatInput   "[MQ2] grey"
+#EVENT chatInput   "You backstab #1# for #2# points of damage."
+#EVENT     snare   "#1# is engulfed by darkness."
+#EVENT     snare   "#1# is surrounded by darkness."
+#EVENT     snare   "#1# has been ensnared."
+#EVENT     snare   "Your spell did not take hold."
+#EVENT  BotLeave   "#1# has left the group."
 
 Sub Main
 	|------> Expects me to insert radius, and name of mob to keep this generic.
@@ -33,38 +33,38 @@ Sub Main
 	/hidecorpse looted
 
 	|-------> Variables used in my Line Of Sight function
-	/declare healerSlot 		int 	outer 0
-	/declare boolGrey 			bool 	outer
-	/declare pullHeight 		int 	outer
-	/declare pullLevel 			int 	outer
-	/declare loop 				int 	outer
-	/declare targetid 			int 	outer
-	/declare myLevel 			int 	outer
-	/declare closeGapTo 		int 	outer
-	/declare Debug 				int 	outer
-	/declare LevelBonus 		int 	outer
-	/declare minLevel 			int 	outer
-	/declare LOSPull 			bool 	outer
-	/declare pullDir 			string 	outer
-	/declare boolMove 			bool 	outer
-	/declare boolPullFromCamp 	bool 	outer
-	/declare pullFrom 			string 	outer
-	/declare strSpawn 			string 	outer
-	/declare pullRadius 		int 	outer
-	/declare intKillCount 		int 	outer
-	/declare startZone 			int 	outer ${Zone.ID}
-	/declare snared 			bool 	outer FALSE
-	/declare strPuller 			string 	outer
-	/varset boolGrey 			TRUE
-	/varset boolPullFromCamp 	FALSE
-	/varset pullRadius 			${Param0}
-	/varset Debug 				0
-	/varset minLevel 			1
-	/varset LOSPull 			FALSE
-	/varset pullDir				R
-	/varset boolMove			FALSE
-	/varset pullFrom
-	/varset strSpawn			${Param1}
+	/declare healerSlot         int       outer 0
+	/declare boolGrey           bool      outer
+	/declare pullHeight         int       outer
+	/declare pullLevel          int       outer
+	/declare loop               int       outer
+	/declare targetid           int       outer
+	/declare myLevel            int       outer
+	/declare closeGapTo         int       outer
+	/declare Debug              int       outer
+	/declare LevelBonus         int       outer
+	/declare minLevel           int       outer
+	/declare LOSPull            bool      outer
+	/declare pullDir            string    outer
+	/declare boolMove           bool      outer
+	/declare boolPullFromCamp   bool      outer
+	/declare pullFrom           string    outer
+	/declare strSpawn           string    outer
+	/declare pullRadius         int       outer
+	/declare intKillCount       int       outer
+	/declare startZone          int       outer ${Zone.ID}
+	/declare snared             bool      outer FALSE
+	/declare strPuller          string    outer
+	/varset  boolGrey           TRUE
+	/varset  boolPullFromCamp   FALSE
+	/varset  pullRadius         ${Param0}
+	/varset  Debug              0
+	/varset  minLevel           1
+	/varset  LOSPull            FALSE
+	/varset  pullDil            R
+	/varset  boolMovl           FALSE
+	/varset  pullFrom
+	/varset  strSpawl           ${Param1}
 
 	/mapfilter spellradius ${pullRadius}
 	/mapfilter castradius 40
@@ -140,11 +140,11 @@ Sub Main
 	|---------- Did I level up?
 	/if (${myLevel} < ${Me.Level} && !${Me.CombatState.Equal[Combat]}) {
 		/say ^botupdate
-	  	/varset myLevel ${Me.Level}
-	  	/echo ===== CONGRATS! =====
-	  	/echo -----  CHEATER  -----
-	  	/echo ---------------------
-	  	/echo = Won't pull mobs Level > ${pullLevel}
+		/varset myLevel ${Me.Level}
+		/echo ===== CONGRATS! =====
+		/echo -----  CHEATER  -----
+		/echo ---------------------
+		/echo = Won't pull mobs Level > ${pullLevel}
 	}
 	|------- Start of pulling logic.
 	  /if (${Debug}) /echo Clearing Target
@@ -495,7 +495,7 @@ Sub Ranger
 	/attack on
 	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Ensnare]} && !${snared}) {
 		/cast "Ensnare"
-		/delay 3s (!${Me.Casting.ID}
+		/delay 3s !${Me.Casting.ID}
 		/doevents snare
 	}
 	/if (${Target.Type.Equal[NPC]} && ${Target.ID} != NULL && ${Me.SpellReady[Snare]} && !${snared}) {
@@ -569,7 +569,6 @@ Sub Cleric
 	:CLERICTOP
 	/call SpotHeal 70 100
 	/if (${Me.CombatState.Equal[COMBAT]}) /GOTO :CLERICTOP
-
 /return
 
 Sub Nuke
@@ -636,7 +635,7 @@ Sub Melee
 	/face fast
 	/squelch /stick 70% moveback
  :MELEETOP
- 	/if (${Debug}>3) /echo Melee Loop
+	/if (${Debug}>3) /echo Melee Loop
 	/doevents chatInput
 	/if (!${Me.TargetOfTarget.CurrentHPs}) /return
 	/attack on
