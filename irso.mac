@@ -17,20 +17,24 @@ Sub Main(int intCommander, int intBadGuy)
 	/delay 3s
 	/pet attack
 	/face fast
+	/declare intStopCast int local 30
 	/declare BAD[3] string outer NULL
-	/varset BAD[2] "Venom of the snake"
-	/varset BAD[3] "Scourge"
+	/varset BAD[2] "Envenomed Bolt"
+	/varset BAD[3] "Plague"
 	/varset BAD[1] "Togor's Insects"
 	/declare GOOD[1] string outer "Regeneration"
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
-		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
+		/if (${Spawn[id ${intBadGuy}].PctHPs} > ${intStopCast} && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
 				/call SpotHeal 30 100
 				|     Life  %--^  ^---Range
 				/delay 3s ${Me.SpellReady[${BAD[${loop}]}]}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
+				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) {
+					/gsay Cast ${BAD[${loop}]} on ${Target.CleanName} with ${Target.PctHPs}
+					/casting ${BAD[${loop}]} -targetid|${intBadGuy}
+				}
 			/next loop
 		}
 		/if (${Me.CombatState.Equal[Combat]}) {
@@ -51,9 +55,9 @@ Sub Main(int intCommander, int intBadGuy)
 /return
 
 Sub Cannibalize
+	/echo Cannibalize
 	/if (${Me.CombatState.Equal[Active]}) {
 		/if (!${Me.Sitting}) /sit
-		/return FALSE
 	}
 	/delay 12s ${Me.SpellReady[Cannibalize II]}
 	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize II]}) {

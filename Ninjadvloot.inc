@@ -185,7 +185,7 @@ Sub LootCorpse(CorpseID)
     /declare j              int    local
     /declare LootList       string local
     /declare FirstLetter    string local
-    /declare GCheck            string local
+    /declare GCheck         string local
     /call CheckCursor
     /varset CantLootID 0
     /if (${Debugloot}) /echo DEBUGLOOT /loot

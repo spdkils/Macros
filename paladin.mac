@@ -58,7 +58,7 @@ Sub Main
 			}
 		/if (${Me.Combat} && ${Me.SpellReady[Cease]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Cease" -targetid|${myTarget}
 		/if (${Me.Combat} && ${Me.SpellReady[Stun]} && ${Me.TargetOfTarget.ID} != ${Me.ID} && !${Me.AbilityReady[Taunt]}) /casting "Stun" -targetid|${myTarget}
-		/if (${Me.Casting.ID}) /bc I will not be ignored!
+		| /if (${Me.Casting.ID}) /bc I will not be ignored!
 		/delay 4s !${Me.Casting.ID}
 	}
 	/if (${Me.PctHPs} < 31) {
@@ -90,18 +90,18 @@ Sub Main
 Sub EVENT_mobCast(strFullmsg,strWho)
 	/if (${Target.CleanName.Equal[${strWho}]} && ${Target.Distance}<15 && ${Me.Combat} && ${Me.AbilityReady[Bash]}) {
 		/doability "Bash"
-		/bc Shield to the FACE
+		|/bc Shield to the FACE
 		/return
 	}
 	/if (${Target.CleanName.Equal[${strWho}]} && ${Me.SpellReady[Cease]} && !${Me.AbilityReady[Bash]}) {
 		/cast "Cease"
-		/bc No CAST!
+		|/bc No CAST!
 		/delay 4s !${Me.Casting.ID}
 		/return
 	}
 	/if (${Target.CleanName.Equal[${strWho}]} && ${Me.SpellReady[Desist]} && !${Me.AbilityReady[Bash]}) {
 		/cast "Desist"
-		/bc No CAST!
+		|/bc No CAST!
 		/delay 4s !${Me.Casting.ID}
 		/return
 	}

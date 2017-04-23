@@ -13,20 +13,24 @@ Sub Main(int intCommander, int intBadGuy)
 	/pet attack
 	/face fast
 	/declare intTargetLife int local ${Target.PctHPs}
+	/declare intStopCast int local 30
 	/declare BAD[4] string outer NULL
-	/varset BAD[1] "Boil Blood"
+	/varset BAD[1] "Ignite Blood"
 	/varset BAD[2] "Asystole"
-	/varset BAD[3] "Scourge"
+	/varset BAD[3] "Envenomed Bolt"
 	/varset BAD[4] "Engulfing Darkness"
 	/declare GOOD[1] string outer NULL
 	/declare loop int inner 0
 	:TOP
 		/call Feign_Death
 		|- Bad spells on target macro was run on
-		/if (${Spawn[id ${intBadGuy}].PctHPs} > 20 && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
+		/if (${Spawn[id ${intBadGuy}].PctHPs} > ${intStopCast} && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
 				/delay 2s ${Me.SpellReady[${BAD[${loop}]}]}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) /casting ${BAD[${loop}]} -targetid|${intBadGuy}
+				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) {
+					/gsay Cast ${BAD[${loop}]} on ${Target.CleanName} with ${Target.PctHPs}
+					/casting ${BAD[${loop}]} -targetid|${intBadGuy}
+				}
 			/next loop
 		}
 
