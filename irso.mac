@@ -21,8 +21,9 @@ Sub Main(int intCommander, int intBadGuy)
 	/declare BAD[3] string outer NULL
 	/varset BAD[2] "Envenomed Bolt"
 	/varset BAD[3] "Plague"
-	/varset BAD[1] "Togor's Insects"
-	/declare GOOD[1] string outer "Regeneration"
+	/varset BAD[1] "Turgur's Insects"
+	/declare GOOD[2] string outer "Regeneration"
+	/varset GOOD[2] "Spirit of Blih'Li"
 	/declare loop int inner 0
 	:TOP
 		|- Bad spells on target macro was run on
@@ -31,7 +32,7 @@ Sub Main(int intCommander, int intBadGuy)
 				/call SpotHeal 30 100
 				|     Life  %--^  ^---Range
 				/delay 3s ${Me.SpellReady[${BAD[${loop}]}]}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) {
+				/if (${Spawn[id ${intBadGuy}].PctHPs} > ${intStopCast} && ${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<3) {
 					/gsay Cast ${BAD[${loop}]} on ${Target.CleanName} with ${Target.PctHPs}
 					/casting ${BAD[${loop}]} -targetid|${intBadGuy}
 				}
@@ -55,9 +56,10 @@ Sub Main(int intCommander, int intBadGuy)
 /return
 
 Sub Cannibalize
-	/echo Cannibalize
-	/if (${Me.CombatState.Equal[Active]}) {
+	| /echo Cannibalize
+	/if (${Me.CombatState.Equal[ACTIVE]} && !${Me.Sitting}) {
 		/if (!${Me.Sitting}) /sit
+		/return FALSE
 	}
 	/delay 12s ${Me.SpellReady[Cannibalize II]}
 	/if (${Me.PctMana} < 90 && ${Me.PctHPs} > 30 && ${Me.SpellReady[Cannibalize II]}) {
@@ -71,7 +73,7 @@ Sub SpotHeal(int intHealThreshold, int intSpellRange)
 	/declare intLoop int local 0
 	/declare intPctHPs int local 100
 	/declare intTargetID int local 0
-	/declare strHealSpell string local "Greater Healing"
+	/declare strHealSpell string local "Superior Healing"
 	| Check group health
 	/for intLoop 0 to ${Group}
 		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {

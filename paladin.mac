@@ -31,6 +31,7 @@ Sub Main
 /bc Attacking ${Target.Name}
 /declare caster bool local ${Target.Class.PureCaster}
 /if (!${caster}) /varset caster ${Target.Class.PetClass}
+/delay 3s (${Spawn[id ${myTarget}].Distance} < 10)
 :TOP
 	/if (${Me.PctHPs} > 30) /varset aids true
 	/attack on

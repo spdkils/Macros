@@ -16,7 +16,7 @@ Sub Main(int intCommander, int intBadGuy)
 	/declare intStopCast int local 30
 	/declare BAD[4] string outer NULL
 	/varset BAD[1] "Ignite Blood"
-	/varset BAD[2] "Asystole"
+	/varset BAD[2] "Plauge"
 	/varset BAD[3] "Envenomed Bolt"
 	/varset BAD[4] "Engulfing Darkness"
 	/declare GOOD[1] string outer NULL
@@ -27,7 +27,7 @@ Sub Main(int intCommander, int intBadGuy)
 		/if (${Spawn[id ${intBadGuy}].PctHPs} > ${intStopCast} && ${Spawn[id ${intBadGuy}].Dead} == FALSE && ${Spawn[id ${intBadGuy}].Type.Equal[NPC]}) {
 			/for loop 1 to ${BAD.Size}
 				/delay 2s ${Me.SpellReady[${BAD[${loop}]}]}
-				/if (${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) {
+				/if (${Spawn[id ${intBadGuy}].PctHPs} > ${intStopCast} && ${Me.CurrentMana} > ${Spell[${BAD[${loop}]}].Mana} && ${Me.SpellReady[${BAD[${loop}]}]} && ${SpellTimer[${intBadGuy},${BAD[${loop}]}]}<4) {
 					/gsay Cast ${BAD[${loop}]} on ${Target.CleanName} with ${Target.PctHPs}
 					/casting ${BAD[${loop}]} -targetid|${intBadGuy}
 				}
@@ -59,7 +59,7 @@ Sub Feign_Death
 		/delay 3s ${Me.SpellReady[Feign Death]}
 		/if (${Me.CurrentMana} >= ${Spell[Feign Death].Mana} && !${Me.Feigning}) {
 			/gsay Playing Dead
-			/casting "feign Death"
+			/casting "Comatose"
 		}
 	}
 

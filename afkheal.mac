@@ -38,10 +38,28 @@ Sub Main
 /return
 
 
-Sub CanCast(string Spelll)
-	/if ($)
-
-
+Sub SpotHeal(int intHealThreshold, int intSpellRange)
+	/declare intLoop int local 0
+	/declare intPctHPs int local 100
+	/declare intTargetID int local 0
+	/declare strHealSpell string local "Superior Healing"
+	| Check group health
+	/for intLoop 0 to ${Group}
+		/if (${Group.Member[${intLoop}].PctHPs} && ${Group.Member[${intLoop}].PctHPs} < ${intPctHPs}) {
+			/varset intPctHPs ${Group.Member[${intLoop}].PctHPs}
+			/varset intTargetID ${Group.Member[${intLoop}].ID}
+		}
+	/next intLoop
+	| Check to see if they are in range, and meet the threshold for a heal.}
+	/if (${Spawn[id ${intTargetID}].Distance} < ${intSpellRange} && ${intPctHPs} <= ${intHealThreshold} && ${Me.CurrentMana} > ${Spell[${strHealSpell}].Mana}) {
+		/delay 3s ${Me.SpellReady[${strHealSpell}]}
+		/if (${Me.SpellReady[${strHealSpell}]}) {
+			/gsay Casting ${strHealSpell} on ${Spawn[id ${intTargetID}].Name}
+			/casting ${strHealSpell} -targetid|${intTargetID}
+			/delay 12s !${Me.Casting.ID}
+			/call SpotHeal
+		}
+	}
 /return
 
 
